@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import '../../../core/utils/eligibility.dart';
@@ -27,8 +30,20 @@ class Donor {
       nextEligible == null || !nextEligible!.isAfter(DateTime.now());
   bool get canBeContacted => available && eligibleNow;
 
+  /// Decoded photo for Image.memory(), or null if there is no photo.
+  Uint8List? get photoBytes {
+    final p = photoB64;
+    if (p == null || p.isEmpty) return null;
+    try {
+      return base64Decode(p);
+    } catch (_) {
+      return null;
+    }
+  }
+
   factory Donor.fromDoc(DocumentSnapshot<Map<String, dynamic>> d) {
-    final m = d.data()!;
+    final m = d.data() ?? <String, dynamic>{};
+    final pos = m['position'];
     return Donor(
       uid: d.id,
       name: m['name'] ?? '',
@@ -38,8 +53,8 @@ class Donor {
       available: m['available'] ?? true,
       verified: m['verified'] ?? false,
       lastDonation: (m['lastDonation'] as Timestamp?)?.toDate(),
-      photoB64: m['photoUrl'],
-      location: (m['position']?['geopoint']) as GeoPoint?,
+      photoB64: m['photoB64'] as String?,
+      location: pos is Map ? pos['geopoint'] as GeoPoint? : null,
     );
   }
 
@@ -52,8 +67,32 @@ class Donor {
         'verified': verified,
         'lastDonation':
             lastDonation == null ? null : Timestamp.fromDate(lastDonation!),
-        'photoUrl': photoB64,
+        'photoB64': photoB64,
         if (location != null) 'position': GeoFirePoint(location!).data,
         'updatedAt': FieldValue.serverTimestamp(),
       };
+
+  Donor copyWith({
+    String? name,
+    String? bloodGroup,
+    String? district,
+    String? area,
+    bool? available,
+    bool? verified,
+    DateTime? lastDonation,
+    String? photoB64,
+    GeoPoint? location,
+  }) =>
+      Donor(
+        uid: uid,
+        name: name ?? this.name,
+        bloodGroup: bloodGroup ?? this.bloodGroup,
+        district: district ?? this.district,
+        area: area ?? this.area,
+        available: available ?? this.available,
+        verified: verified ?? this.verified,
+        lastDonation: lastDonation ?? this.lastDonation,
+        photoB64: photoB64 ?? this.photoB64,
+        location: location ?? this.location,
+      );
 }

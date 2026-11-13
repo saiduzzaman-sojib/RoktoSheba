@@ -8,6 +8,9 @@ service cloud.firestore {
       return signedIn() &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
+    function photoOk(d) {
+      return !('photoB64' in d) || d.photoB64 == null || d.photoB64.size() < 150000;
+    }
 
     match /users/{uid} {
       allow read: if isOwner(uid) || isAdmin();
@@ -15,20 +18,20 @@ service cloud.firestore {
       allow update: if (isOwner(uid) && request.resource.data.role == resource.data.role) || isAdmin();
     }
 
-        match /donors/{uid} {
+    match /donors/{uid} {
       allow read: if signedIn();
       allow create: if isOwner(uid)
         && request.resource.data.verified == false
-        && (!('photoB64' in request.resource.data)
-            || request.resource.data.photoB64 == null
-            || request.resource.data.photoB64.size() < 150000);
+        && photoOk(request.resource.data);
       allow update: if (isOwner(uid)
           && request.resource.data.verified == resource.data.verified
-          && (!('photoB64' in request.resource.data)
-              || request.resource.data.photoB64 == null
-              || request.resource.data.photoB64.size() < 150000))
+          && photoOk(request.resource.data))
         || isAdmin();
       allow delete: if isOwner(uid) || isAdmin();
+    }
+
+    match /donor_private/{uid} {
+      allow read, write: if isOwner(uid) || isAdmin();
     }
 
     match /requests/{id} {
