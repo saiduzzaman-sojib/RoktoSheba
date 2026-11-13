@@ -22,7 +22,7 @@ class AppButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
-              color: white ? Colors.black26 : AppColors.red.withOpacity(.6),
+              color: white ? Colors.black26 : AppColors.red.withValues(alpha: .6),
               blurRadius: 24, offset: const Offset(0, 12), spreadRadius: -8),
           ],
         ),

@@ -13,13 +13,21 @@ class BloodDrop extends StatefulWidget {
 }
 
 class _BloodDropState extends State<BloodDrop> with SingleTickerProviderStateMixin {
-  late final AnimationController _c = AnimationController(
-      vsync: this, duration: const Duration(milliseconds: 2800))
-    ..repeat(reverse: true);
+  AnimationController? _c;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.pulse) {
+      _c = AnimationController(
+          vsync: this, duration: const Duration(milliseconds: 2800))
+        ..repeat(reverse: true);
+    }
+  }
 
   @override
   void dispose() {
-    _c.dispose();
+    _c?.dispose();
     super.dispose();
   }
 
@@ -47,11 +55,12 @@ class _BloodDropState extends State<BloodDrop> with SingleTickerProviderStateMix
       ),
     );
     final rotated = Transform.rotate(angle: -math.pi / 4, child: drop);
-    if (!widget.pulse) return rotated;
+    final c = _c;
+    if (c == null) return rotated;
     return AnimatedBuilder(
-      animation: _c,
+      animation: c,
       builder: (_, child) =>
-          Transform.scale(scale: 1 + .1 * _c.value, child: child),
+          Transform.scale(scale: 1 + .1 * c.value, child: child),
       child: rotated,
     );
   }
