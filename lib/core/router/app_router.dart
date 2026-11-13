@@ -6,7 +6,9 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
 import '../../features/camps/camps_screen.dart';
+import '../../features/compatibility/compatibility_screen.dart';
 import '../../features/donors/presentation/nearby_screen.dart';
+import '../../features/eligibility/eligibility_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/requests/presentation/request_screen.dart';
@@ -46,26 +48,28 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      GoRoute(path: '/', builder: (_, __) => const SplashScreen()),
-      GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
-      GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
+      GoRoute(path: '/', builder: (_, _) => const SplashScreen()),
+      GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
+      GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
+      GoRoute(path: '/eligibility', builder: (_, _) => const EligibilityScreen()),
+      GoRoute(path: '/compatibility', builder: (_, _) => const CompatibilityScreen()),
       StatefulShellRoute.indexedStack(
-        builder: (_, __, shell) => MainShell(navigationShell: shell),
+        builder: (_, _, shell) => MainShell(navigationShell: shell),
         branches: [
           StatefulShellBranch(routes: [
-            GoRoute(path: '/home', builder: (_, __) => const HomeScreen()),
+            GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
           ]),
           StatefulShellBranch(routes: [
-            GoRoute(path: '/nearby', builder: (_, __) => const NearbyScreen()),
+            GoRoute(path: '/nearby', builder: (_, _) => const NearbyScreen()),
           ]),
           StatefulShellBranch(routes: [
-            GoRoute(path: '/request', builder: (_, __) => const RequestScreen()),
+            GoRoute(path: '/request', builder: (_, _) => const RequestScreen()),
           ]),
           StatefulShellBranch(routes: [
-            GoRoute(path: '/camps', builder: (_, __) => const CampsScreen()),
+            GoRoute(path: '/camps', builder: (_, _) => const CampsScreen()),
           ]),
           StatefulShellBranch(routes: [
-            GoRoute(path: '/profile', builder: (_, __) => const ProfileScreen()),
+            GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
           ]),
         ],
       ),
