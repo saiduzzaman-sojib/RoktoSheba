@@ -1,27 +1,18 @@
 import 'package:flutter/material.dart';
-import 'core/theme/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 
-class RoktoshebaApp extends StatelessWidget {
+class RoktoshebaApp extends ConsumerWidget {
   const RoktoshebaApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(BuildContext context, WidgetRef ref) {
+    return MaterialApp.router(
       title: 'Roktosheba',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      builder: (context, child) => Container(
-        decoration: const BoxDecoration(gradient: AppColors.bgGradient),
-        child: child,
-      ),
-      // Router (go_router) is wired up in Step 3
-      home: const Scaffold(
-        body: Center(
-          child: Text('Roktosheba',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.w800)),
-        ),
-      ),
+      routerConfig: ref.watch(routerProvider),
     );
   }
 }
