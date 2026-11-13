@@ -13,6 +13,7 @@ import '../../features/eligibility/eligibility_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/requests/presentation/request_screen.dart';
+import '../../features/requests/presentation/request_status_screen.dart';
 import '../../features/splash/splash_screen.dart';
 import '../widgets/main_shell.dart';
 
@@ -34,6 +35,9 @@ const _authPages = ['/', '/login', '/register'];
 // Pages a logged-out visitor may open (proposal: visitors browse without login).
 const _publicPages = [..._authPages, '/camps', '/eligibility', '/compatibility', '/blog'];
 
+Map<String, String>? _extraMap(Object? e) =>
+    e is Map ? e.map((k, v) => MapEntry('$k', '$v')) : null;
+
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = _AuthRefresh(FirebaseAuth.instance.authStateChanges());
   ref.onDispose(refresh.dispose);
@@ -45,10 +49,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final loggedIn = FirebaseAuth.instance.currentUser != null;
       final loc = state.matchedLocation;
       if (loggedIn && _authPages.contains(loc)) return '/home';
-      if (!loggedIn && !_publicPages.contains(loc) && !loc.startsWith('/donor/')) {
-        return '/login';
-      }
-      if (!loggedIn && loc.startsWith('/donor/')) return '/login';
+      if (!loggedIn && !_publicPages.contains(loc)) return '/login';
       return null;
     },
     routes: [
@@ -61,6 +62,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/donor/:uid',
         builder: (_, state) => DonorDetailScreen(uid: state.pathParameters['uid']!),
       ),
+      GoRoute(
+        path: '/request/:id',
+        builder: (_, state) => RequestStatusScreen(id: state.pathParameters['id']!),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => MainShell(navigationShell: shell),
         branches: [
@@ -71,7 +76,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             GoRoute(path: '/nearby', builder: (_, _) => const NearbyScreen()),
           ]),
           StatefulShellBranch(routes: [
-            GoRoute(path: '/request', builder: (_, _) => const RequestScreen()),
+            GoRoute(
+              path: '/request',
+              builder: (_, state) => RequestScreen(extra: _extraMap(state.extra)),
+            ),
           ]),
           StatefulShellBranch(routes: [
             GoRoute(path: '/camps', builder: (_, _) => const CampsScreen()),

@@ -11,6 +11,7 @@ import '../../core/widgets/gradient_scaffold.dart';
 import '../auth/providers/auth_provider.dart';
 import '../donors/models/donor.dart';
 import '../donors/providers/donor_provider.dart';
+import '../requests/presentation/request_widgets.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -130,6 +131,7 @@ class HomeScreen extends ConsumerWidget {
         const SizedBox(width: 12),
         Expanded(child: _Action('Compatibility', 'Who gives to whom', () => context.push('/compatibility'))),
       ]),
+      const UrgentSection(),
     ]);
   }
 }

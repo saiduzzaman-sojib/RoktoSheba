@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/distance.dart';
@@ -93,8 +94,12 @@ class DonorDetailScreen extends ConsumerWidget {
           AppButton(
             label: 'Send request to donor',
             onPressed: ok
-                ? () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Direct requests are added in Step 6.')))
+                ? () => context.go('/request', extra: {
+                      'uid': d.uid,
+                      'name': d.name,
+                      'group': d.bloodGroup,
+                      'ts': '${DateTime.now().millisecondsSinceEpoch}',
+                    })
                 : null,
           ),
         ]);
