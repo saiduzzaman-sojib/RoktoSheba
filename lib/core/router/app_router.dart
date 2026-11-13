@@ -7,6 +7,7 @@ import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
 import '../../features/camps/camps_screen.dart';
 import '../../features/compatibility/compatibility_screen.dart';
+import '../../features/donors/presentation/donor_detail_screen.dart';
 import '../../features/donors/presentation/nearby_screen.dart';
 import '../../features/eligibility/eligibility_screen.dart';
 import '../../features/home/home_screen.dart';
@@ -44,7 +45,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       final loggedIn = FirebaseAuth.instance.currentUser != null;
       final loc = state.matchedLocation;
       if (loggedIn && _authPages.contains(loc)) return '/home';
-      if (!loggedIn && !_publicPages.contains(loc)) return '/login';
+      if (!loggedIn && !_publicPages.contains(loc) && !loc.startsWith('/donor/')) {
+        return '/login';
+      }
+      if (!loggedIn && loc.startsWith('/donor/')) return '/login';
       return null;
     },
     routes: [
@@ -53,6 +57,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
       GoRoute(path: '/eligibility', builder: (_, _) => const EligibilityScreen()),
       GoRoute(path: '/compatibility', builder: (_, _) => const CompatibilityScreen()),
+      GoRoute(
+        path: '/donor/:uid',
+        builder: (_, state) => DonorDetailScreen(uid: state.pathParameters['uid']!),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (_, _, shell) => MainShell(navigationShell: shell),
         branches: [

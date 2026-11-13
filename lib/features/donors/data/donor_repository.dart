@@ -1,9 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/constants/firestore_paths.dart';
 import '../../../core/utils/eligibility.dart';
+import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 
 class DonorRepository {
   DonorRepository(this._db);
+    /// Saves the donor's position, rounded to ~100 m for privacy.
+  Future<void> updateLocation(String uid, double lat, double lng) {
+    double r(double v) => (v * 1000).round() / 1000;
+    final point = GeoPoint(r(lat), r(lng));
+    return _donor(uid).update({
+      'position': GeoFirePoint(point).data,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
   final FirebaseFirestore _db;
 
   DocumentReference<Map<String, dynamic>> _donor(String uid) =>

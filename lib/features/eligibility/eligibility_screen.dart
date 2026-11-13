@@ -57,10 +57,12 @@ class _EligibilityScreenState extends ConsumerState<EligibilityScreen> {
         initialDate: _last ?? now,
         firstDate: DateTime(now.year - 5),
         lastDate: now);
-    if (d != null) setState(() {
+    if (d != null) {
+      setState(() {
       _last = d;
       _touched = true;
     });
+    }
   }
 
   void _check(DateTime? last) {
