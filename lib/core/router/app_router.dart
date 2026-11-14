@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
+import '../../features/blog/blog_detail_screen.dart';
+import '../../features/blog/blog_screen.dart';
 import '../../features/camps/camps_screen.dart';
 import '../../features/compatibility/compatibility_screen.dart';
 import '../../features/donors/presentation/donor_detail_screen.dart';
@@ -33,7 +35,9 @@ class _AuthRefresh extends ChangeNotifier {
 
 const _authPages = ['/', '/login', '/register'];
 // Pages a logged-out visitor may open (proposal: visitors browse without login).
-const _publicPages = [..._authPages, '/camps', '/eligibility', '/compatibility', '/blog'];
+const _publicPages = [..._authPages, '/camps', '/eligibility', '/compatibility'];
+
+bool _isPublic(String loc) => _publicPages.contains(loc) || loc.startsWith('/blog');
 
 Map<String, String>? _extraMap(Object? e) =>
     e is Map ? e.map((k, v) => MapEntry('$k', '$v')) : null;
@@ -49,7 +53,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final loggedIn = FirebaseAuth.instance.currentUser != null;
       final loc = state.matchedLocation;
       if (loggedIn && _authPages.contains(loc)) return '/home';
-      if (!loggedIn && !_publicPages.contains(loc)) return '/login';
+      if (!loggedIn && !_isPublic(loc)) return '/login';
       return null;
     },
     routes: [
@@ -58,6 +62,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
       GoRoute(path: '/eligibility', builder: (_, _) => const EligibilityScreen()),
       GoRoute(path: '/compatibility', builder: (_, _) => const CompatibilityScreen()),
+      GoRoute(path: '/blog', builder: (_, _) => const BlogScreen()),
+      GoRoute(
+        path: '/blog/:id',
+        builder: (_, state) => BlogDetailScreen(id: state.pathParameters['id']!),
+      ),
       GoRoute(
         path: '/donor/:uid',
         builder: (_, state) => DonorDetailScreen(uid: state.pathParameters['uid']!),

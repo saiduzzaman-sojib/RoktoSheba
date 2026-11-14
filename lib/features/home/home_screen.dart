@@ -9,6 +9,7 @@ import '../../core/widgets/avatar.dart';
 import '../../core/widgets/blood_drop.dart';
 import '../../core/widgets/gradient_scaffold.dart';
 import '../auth/providers/auth_provider.dart';
+import '../camps/camp_reminder_section.dart';
 import '../donors/models/donor.dart';
 import '../donors/providers/donor_provider.dart';
 import '../requests/presentation/request_widgets.dart';
@@ -131,6 +132,7 @@ class HomeScreen extends ConsumerWidget {
         const SizedBox(width: 12),
         Expanded(child: _Action('Compatibility', 'Who gives to whom', () => context.push('/compatibility'))),
       ]),
+      const CampReminderSection(),
       const UrgentSection(),
     ]);
   }
@@ -150,7 +152,7 @@ class _Action extends StatelessWidget {
         children: [
           const BloodDrop(size: 20),
           const SizedBox(height: 16),
-          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
           FieldLabel(sub),
         ],
       ),
