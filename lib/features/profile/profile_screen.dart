@@ -13,6 +13,7 @@ import '../donors/models/donor.dart';
 import '../donors/providers/donor_provider.dart';
 import 'package:go_router/go_router.dart';
 import '../admin/admin_provider.dart';
+import '../../../core/widgets/area_field.dart';
 
 final _fmt = DateFormat('d MMM yyyy');
 
@@ -281,11 +282,7 @@ class _EditSheetState extends ConsumerState<_EditSheet> {
                     textCapitalization: TextCapitalization.words,
                     decoration: const InputDecoration(hintText: 'District'))),
             const SizedBox(width: 10),
-            Expanded(
-                child: TextField(
-                    controller: _area,
-                    textCapitalization: TextCapitalization.words,
-                    decoration: const InputDecoration(hintText: 'Area'))),
+            Expanded(child: AreaField(controller: _area)),
           ]),
           const SizedBox(height: 18),
           AppButton(label: 'Save', loading: _busy, onPressed: _save),

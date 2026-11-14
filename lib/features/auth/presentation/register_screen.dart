@@ -13,6 +13,7 @@ import '../../../core/widgets/blood_chip.dart';
 import '../../../core/widgets/gradient_scaffold.dart';
 import '../data/auth_repository.dart';
 import '../providers/auth_provider.dart';
+import '../../../core/widgets/area_field.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -70,6 +71,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   Future<void> _submit() async {
     if (!_form.currentState!.validate()) return;
+        if (_area.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Enter your area.')));
+      return;
+    }
     final messenger = ScaffoldMessenger.of(context);
     setState(() => _busy = true);
     try {
@@ -191,15 +197,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 const SizedBox(height: 14),
                 Row(
                   children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _district,
-                        textCapitalization: TextCapitalization.words,
-                        decoration: const InputDecoration(hintText: 'District'),
-                        validator: (v) =>
-                            (v ?? '').trim().isEmpty ? 'Required' : null,
-                      ),
-                    ),
+                    Expanded(child: AreaField(controller: _area)),
                     const SizedBox(width: 10),
                     Expanded(
                       child: TextFormField(

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import '../../../core/constants/firestore_paths.dart';
 import '../../../core/utils/eligibility.dart';
+import '../../../core/constants/dhaka_areas.dart';
 
 class DonorRepository {
   DonorRepository(this._db);
@@ -19,10 +20,12 @@ class DonorRepository {
   Future<void> updateProfile(String uid,
       {required String name, required String district, required String area}) async {
     final batch = _db.batch();
+    final ap = areaPoint(area);
     batch.update(_donor(uid), {
       'name': name,
       'district': district,
       'area': area,
+      if (ap != null) 'position': GeoFirePoint(GeoPoint(ap.latitude, ap.longitude)).data,
       'updatedAt': FieldValue.serverTimestamp(),
     });
     batch.update(_db.collection(FS.users).doc(uid), {'name': name});

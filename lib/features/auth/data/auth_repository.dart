@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/constants/firestore_paths.dart';
 import '../../../core/utils/eligibility.dart';
 import '../../donors/models/donor.dart';
+import '../../../core/constants/dhaka_areas.dart';
 
 /// "+8801712345678", "880 1712-345678" -> "01712345678"
 String normalizeMobile(String input) {
@@ -89,7 +90,9 @@ class AuthRepository {
       final next = nextEligibleDate(lastDonation);
       final eligible = next == null || !next.isAfter(DateTime.now());
 
+      final ap = areaPoint(area);
       final donor = Donor(
+        location: ap == null ? null : GeoPoint(ap.latitude, ap.longitude),
         uid: user.uid,
         name: name,
         bloodGroup: bloodGroup,

@@ -14,6 +14,7 @@ import '../../donors/models/donor.dart';
 import '../models/blood_request.dart';
 import '../providers/request_provider.dart';
 import 'request_widgets.dart';
+import '../../../core/widgets/area_field.dart';
 
 class RequestScreen extends ConsumerStatefulWidget {
   /// Set when opened from a donor's page: {uid, name, group, ts}.
@@ -145,11 +146,7 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
                   textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(hintText: 'District'))),
           const SizedBox(width: 10),
-          Expanded(
-              child: TextField(
-                  controller: _area,
-                  textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(hintText: 'Area'))),
+          Expanded(child: AreaField(controller: _area)),
         ]),
         AppCard(
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
