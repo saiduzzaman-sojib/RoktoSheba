@@ -16,6 +16,7 @@ import '../../../core/widgets/gradient_scaffold.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../models/donor.dart';
 import '../providers/donor_provider.dart';
+import '../../../core/constants/dhaka_areas.dart';
 
 class _Item {
   final Donor donor;
@@ -103,9 +104,10 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
 
     final items = <_Item>[];
     for (final d in all) {
-      if (d.uid == myUid || d.location == null || !d.canBeContacted) continue;
+            final p = donorPoint(d);
+      if (d.uid == myUid || p == null || !d.canBeContacted) continue;
       if (_group != 'All' && d.bloodGroup != _group) continue;
-      final km = distanceKm(me.latitude, me.longitude, d.location!.latitude, d.location!.longitude);
+      final km = distanceKm(me.latitude, me.longitude, p.latitude, p.longitude);
       if (km <= _radius) items.add(_Item(d, km));
     }
     items.sort((a, b) => a.km.compareTo(b.km));
@@ -185,7 +187,7 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                   ),
                   for (final i in items)
                     Marker(
-                      point: LatLng(i.donor.location!.latitude, i.donor.location!.longitude),
+                      point: donorPoint(i.donor)!,
                       width: 52,
                       height: 52,
                       child: GestureDetector(
