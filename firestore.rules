@@ -11,6 +11,11 @@ service cloud.firestore {
     function photoOk(d) {
       return !('photoB64' in d) || d.photoB64 == null || d.photoB64.size() < 150000;
     }
+    // The signed-in user has a donor profile and is not blocked.
+    function notBlocked() {
+      return exists(/databases/$(database)/documents/donors/$(request.auth.uid)) &&
+        !get(/databases/$(database)/documents/donors/$(request.auth.uid)).data.get('blocked', false);
+    }
 
     match /users/{uid} {
       allow read: if isOwner(uid) || isAdmin();
@@ -22,9 +27,11 @@ service cloud.firestore {
       allow read: if signedIn();
       allow create: if isOwner(uid)
         && request.resource.data.verified == false
+        && request.resource.data.get('blocked', false) == false
         && photoOk(request.resource.data);
       allow update: if (isOwner(uid)
           && request.resource.data.verified == resource.data.verified
+          && request.resource.data.get('blocked', false) == resource.data.get('blocked', false)
           && photoOk(request.resource.data))
         || isAdmin();
       allow delete: if isOwner(uid) || isAdmin();
@@ -37,6 +44,7 @@ service cloud.firestore {
     match /requests/{id} {
       allow read: if signedIn();
       allow create: if signedIn()
+        && notBlocked()
         && request.resource.data.requesterId == request.auth.uid
         && request.resource.data.status == 'open';
       allow update, delete: if signedIn()
@@ -53,7 +61,7 @@ service cloud.firestore {
       }
 
       match /responses/{donorId} {
-        allow create, update: if isOwner(donorId);
+        allow create, update: if isOwner(donorId) && notBlocked();
         allow read: if isOwner(donorId)
           || get(/databases/$(database)/documents/requests/$(id)).data.requesterId == request.auth.uid
           || isAdmin();

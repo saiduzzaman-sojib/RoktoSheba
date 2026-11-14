@@ -7,7 +7,7 @@ import '../../../core/utils/eligibility.dart';
 
 class Donor {
   final String uid, name, bloodGroup, district, area;
-  final bool available, verified;
+  final bool available, verified, blocked;
   final DateTime? lastDonation;
   final String? photoB64;
   final GeoPoint? location;
@@ -20,6 +20,7 @@ class Donor {
     required this.area,
     this.available = true,
     this.verified = false,
+    this.blocked = false,
     this.lastDonation,
     this.photoB64,
     this.location,
@@ -28,7 +29,7 @@ class Donor {
   DateTime? get nextEligible => nextEligibleDate(lastDonation);
   bool get eligibleNow =>
       nextEligible == null || !nextEligible!.isAfter(DateTime.now());
-  bool get canBeContacted => available && eligibleNow;
+  bool get canBeContacted => available && eligibleNow && !blocked;
 
   /// Decoded photo for Image.memory(), or null if there is no photo.
   Uint8List? get photoBytes {
@@ -52,6 +53,7 @@ class Donor {
       area: m['area'] ?? '',
       available: m['available'] ?? true,
       verified: m['verified'] ?? false,
+      blocked: m['blocked'] ?? false,
       lastDonation: (m['lastDonation'] as Timestamp?)?.toDate(),
       photoB64: m['photoB64'] as String?,
       location: pos is Map ? pos['geopoint'] as GeoPoint? : null,
@@ -65,6 +67,7 @@ class Donor {
         'area': area,
         'available': available,
         'verified': verified,
+        'blocked': blocked,
         'lastDonation':
             lastDonation == null ? null : Timestamp.fromDate(lastDonation!),
         'photoB64': photoB64,
@@ -79,6 +82,7 @@ class Donor {
     String? area,
     bool? available,
     bool? verified,
+    bool? blocked,
     DateTime? lastDonation,
     String? photoB64,
     GeoPoint? location,
@@ -91,6 +95,7 @@ class Donor {
         area: area ?? this.area,
         available: available ?? this.available,
         verified: verified ?? this.verified,
+        blocked: blocked ?? this.blocked,
         lastDonation: lastDonation ?? this.lastDonation,
         photoB64: photoB64 ?? this.photoB64,
         location: location ?? this.location,

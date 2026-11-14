@@ -33,7 +33,7 @@ final availableDonorCountProvider = StreamProvider<int>((ref) {
       .collection(FS.donors)
       .where('available', isEqualTo: true)
       .snapshots()
-      .map((s) => s.size);
+      .map((s) => s.docs.where((d) => d.data()['blocked'] != true).length);;
 });
 
 /// All available donors (filtered by distance on the device).

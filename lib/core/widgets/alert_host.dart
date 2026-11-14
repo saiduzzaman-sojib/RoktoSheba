@@ -8,6 +8,7 @@ import '../constants/firestore_paths.dart';
 import '../router/app_router.dart';
 import '../theme/app_colors.dart';
 import 'blood_drop.dart';
+import '../../features/admin/admin_provider.dart';
 
 /// Wraps the whole app and slides a banner in when a matching request arrives.
 class AlertHost extends ConsumerStatefulWidget {
@@ -73,6 +74,7 @@ class _AlertHostState extends ConsumerState<AlertHost> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(eligibilityRulesProvider);
     ref.listen<List<IncomingRequest>>(incomingRequestsProvider, (_, next) {
       scheduleMicrotask(() => _check(next));
     });

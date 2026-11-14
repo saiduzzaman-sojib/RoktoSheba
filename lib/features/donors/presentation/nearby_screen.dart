@@ -306,7 +306,7 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                         style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.red)),
                   ])),
-                  FieldLabel('${i.km.toStringAsFixed(1)} km · ${i.donor.area} · Available'),
+                  FieldLabel('${i.km.toStringAsFixed(1)} km · ${i.donor.area} · Available${i.donor.verified ? ' · Verified ✓' : ''}'),
                 ],
               ),
             ),

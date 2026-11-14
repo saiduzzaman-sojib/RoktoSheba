@@ -1,3 +1,7 @@
+/// Waiting period between donations. The admin can change it in config/eligibility;
+/// admin_provider.dart keeps this value in sync.
+int globalGapDays = 90;
+
 class EligibilityRules {
   final int minAge, maxAge, gapDays;
   final double minWeight;
@@ -7,10 +11,10 @@ class EligibilityRules {
   factory EligibilityRules.fromMap(Map<String, dynamic>? m) => m == null
       ? const EligibilityRules()
       : EligibilityRules(
-          minAge: (m['minAge'] ?? 18) as int,
-          maxAge: (m['maxAge'] ?? 60) as int,
+          minAge: ((m['minAge'] ?? 18) as num).toInt(),
+          maxAge: ((m['maxAge'] ?? 60) as num).toInt(),
           minWeight: ((m['minWeight'] ?? 50) as num).toDouble(),
-          gapDays: (m['gapDays'] ?? 90) as int,
+          gapDays: ((m['gapDays'] ?? 90) as num).toInt(),
         );
 }
 
@@ -20,8 +24,8 @@ class EligibilityResult {
   const EligibilityResult(this.ok, this.reasons);
 }
 
-DateTime? nextEligibleDate(DateTime? lastDonation, {int gapDays = 90}) =>
-    lastDonation?.add(Duration(days: gapDays));
+DateTime? nextEligibleDate(DateTime? lastDonation, {int? gapDays}) =>
+    lastDonation?.add(Duration(days: gapDays ?? globalGapDays));
 
 EligibilityResult checkEligibility({
   required int age,

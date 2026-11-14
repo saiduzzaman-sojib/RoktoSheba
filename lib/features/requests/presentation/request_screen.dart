@@ -67,6 +67,11 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
 
   Future<void> _post(Donor me) async {
     final m = ScaffoldMessenger.of(context);
+    if (me.blocked) {
+      m.showSnackBar(const SnackBar(
+          content: Text('Your account is restricted. You cannot post requests.')));
+      return;
+    }
     final hospital = _hospital.text.trim();
     final district = _district.text.trim();
     final area = _area.text.trim();

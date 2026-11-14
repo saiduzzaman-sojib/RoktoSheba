@@ -11,6 +11,8 @@ import '../../core/widgets/gradient_scaffold.dart';
 import '../auth/providers/auth_provider.dart';
 import '../donors/models/donor.dart';
 import '../donors/providers/donor_provider.dart';
+import 'package:go_router/go_router.dart';
+import '../admin/admin_provider.dart';
 
 final _fmt = DateFormat('d MMM yyyy');
 
@@ -67,6 +69,7 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final donor = ref.watch(myDonorProvider).value;
     final donations = ref.watch(myDonationsProvider).value ?? const [];
+    final isAdmin = ref.watch(isAdminProvider).value ?? false;
 
     if (donor == null) {
       return const AppPage(children: [
@@ -179,6 +182,7 @@ class ProfileScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         child: Column(
           children: [
+             if (isAdmin) _Row('Admin panel', () => context.push('/admin')),
             _Row('Change photo', () => _changePhoto(context, ref, donor.uid)),
             _Row('Edit details', () => _edit(context, donor)),
             _Row('Log out', () => ref.read(authRepositoryProvider).signOut()),
