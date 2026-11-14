@@ -195,19 +195,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       : 'Enter a valid mobile number (01XXXXXXXXX)',
                 ),
                 const SizedBox(height: 14),
-                Row(
+                                Row(
                   children: [
-                    Expanded(child: AreaField(controller: _area)),
-                    const SizedBox(width: 10),
                     Expanded(
                       child: TextFormField(
-                        controller: _area,
+                        controller: _district,
                         textCapitalization: TextCapitalization.words,
-                        decoration: const InputDecoration(hintText: 'Area'),
+                        decoration: const InputDecoration(hintText: 'District'),
                         validator: (v) =>
                             (v ?? '').trim().isEmpty ? 'Required' : null,
                       ),
                     ),
+                    const SizedBox(width: 10),
+                    Expanded(child: AreaField(controller: _area)),
                   ],
                 ),
                 const SizedBox(height: 14),
