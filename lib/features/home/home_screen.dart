@@ -24,6 +24,11 @@ class HomeScreen extends ConsumerWidget {
 
   Future<void> _toggle(BuildContext context, WidgetRef ref, Donor d) async {
     final m = ScaffoldMessenger.of(context);
+    if (d.blocked) {
+      m.showSnackBar(const SnackBar(
+          content: Text('Your account is restricted by an admin.')));
+      return;
+    }
     if (!d.available && !d.eligibleNow) {
       m.showSnackBar(SnackBar(
           content: Text(
@@ -101,6 +106,15 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
       ),
+      if (donor.blocked)
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+              color: const Color(0xFFFBE4E2), borderRadius: BorderRadius.circular(22)),
+          child: const Text(
+              'Your account is restricted by an admin, so you cannot post or answer requests.',
+              style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.red)),
+        ),
       AppCard(
         onTap: () => context.go('/nearby'),
         child: Row(

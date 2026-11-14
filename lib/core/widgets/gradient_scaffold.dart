@@ -34,7 +34,7 @@ class AppPage extends StatelessWidget {
         child: ListView.separated(
           padding: EdgeInsets.fromLTRB(22, 16, 22, navPadding ? 130 : 32),
           itemCount: children.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 14),
+          separatorBuilder: (_, _) => const SizedBox(height: 14),
           itemBuilder: (_, i) => children[i],
         ),
       ),

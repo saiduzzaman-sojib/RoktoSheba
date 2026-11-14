@@ -25,7 +25,7 @@ final myDonationsProvider = StreamProvider<List<Donation>>((ref) {
   });
 });
 
-/// How many donors are marked available right now.
+/// How many donors are marked available right now (blocked ones excluded).
 final availableDonorCountProvider = StreamProvider<int>((ref) {
   final user = ref.watch(authStateProvider).value;
   if (user == null) return Stream.value(0);
@@ -33,7 +33,7 @@ final availableDonorCountProvider = StreamProvider<int>((ref) {
       .collection(FS.donors)
       .where('available', isEqualTo: true)
       .snapshots()
-      .map((s) => s.docs.where((d) => d.data()['blocked'] != true).length);;
+      .map((s) => s.docs.where((d) => d.data()['blocked'] != true).length);
 });
 
 /// All available donors (filtered by distance on the device).

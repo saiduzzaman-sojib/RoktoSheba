@@ -84,6 +84,13 @@ class DonorDetailScreen extends ConsumerWidget {
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: ok ? AppColors.green : AppColors.red)),
+              if (d.verified)
+                const Padding(
+                  padding: EdgeInsets.only(top: 6),
+                  child: Text('✓ Verified donor',
+                      style: TextStyle(
+                          fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.green)),
+                ),
             ]),
           ),
           _row('Last donation',
