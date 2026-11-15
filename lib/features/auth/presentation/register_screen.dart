@@ -8,12 +8,12 @@ import '../../../core/constants/blood.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/photo.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/area_field.dart';
 import '../../../core/widgets/avatar.dart';
 import '../../../core/widgets/blood_chip.dart';
 import '../../../core/widgets/gradient_scaffold.dart';
 import '../data/auth_repository.dart';
 import '../providers/auth_provider.dart';
-import '../../../core/widgets/area_field.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -71,12 +71,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   Future<void> _submit() async {
     if (!_form.currentState!.validate()) return;
-        if (_area.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Enter your area.')));
+    final messenger = ScaffoldMessenger.of(context);
+    if (_area.text.trim().isEmpty) {
+      messenger.showSnackBar(const SnackBar(content: Text('Enter your area.')));
       return;
     }
-    final messenger = ScaffoldMessenger.of(context);
     setState(() => _busy = true);
     try {
       await ref.read(authRepositoryProvider).register(
@@ -195,7 +194,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       : 'Enter a valid mobile number (01XXXXXXXXX)',
                 ),
                 const SizedBox(height: 14),
-                                Row(
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: TextFormField(
