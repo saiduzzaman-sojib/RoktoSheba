@@ -249,15 +249,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   controller: _pw,
                   obscureText: _hide,
                   decoration: InputDecoration(
-                    hintText: 'Password (min 6 characters)',
+                    hintText: 'Password (8+, letters and numbers)',
                     suffixIcon: IconButton(
                       icon: Icon(_hide ? Icons.visibility_off : Icons.visibility,
                           color: AppColors.grey),
                       onPressed: () => setState(() => _hide = !_hide),
                     ),
                   ),
-                  validator: (v) =>
-                      (v ?? '').length < 6 ? 'Use at least 6 characters' : null,
+                  validator: (v) {
+                    final p = v ?? '';
+                    if (p.length < 8) return 'Use at least 8 characters';
+                    if (!RegExp(r'[A-Za-z]').hasMatch(p) ||
+                        !RegExp(r'\d').hasMatch(p)) {
+                      return 'Use letters and numbers';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 22),
                 AppButton(label: 'Create account', loading: _busy, onPressed: _submit),

@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/eligibility.dart';
 import '../../core/utils/photo.dart';
 import '../../core/widgets/app_button.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/area_field.dart';
 import '../../core/widgets/avatar.dart';
 import '../../core/widgets/gradient_scaffold.dart';
+import '../admin/admin_provider.dart';
+import '../auth/data/auth_repository.dart';
 import '../auth/providers/auth_provider.dart';
 import '../donors/models/donor.dart';
 import '../donors/providers/donor_provider.dart';
-import 'package:go_router/go_router.dart';
-import '../admin/admin_provider.dart';
-import '../../../core/widgets/area_field.dart';
 
 final _fmt = DateFormat('d MMM yyyy');
 
@@ -64,6 +65,39 @@ class ProfileScreen extends ConsumerWidget {
           borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
       builder: (_) => _EditSheet(donor: d),
     );
+  }
+
+  Future<void> _deleteAccount(BuildContext context, WidgetRef ref) async {
+    final m = ScaffoldMessenger.of(context);
+    final pw = TextEditingController();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: const Text('Delete your account?'),
+        content: Column(mainAxisSize: MainAxisSize.min, children: [
+          const Text(
+              'This removes your profile and phone number. It cannot be undone. Enter your password to confirm.'),
+          const SizedBox(height: 12),
+          TextField(
+              controller: pw,
+              obscureText: true,
+              decoration: const InputDecoration(hintText: 'Password')),
+        ]),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(c, true), child: const Text('Delete')),
+        ],
+      ),
+    );
+    final password = pw.text;
+    pw.dispose();
+    if (ok != true) return;
+    try {
+      await ref.read(authRepositoryProvider).deleteAccount(password);
+      m.showSnackBar(const SnackBar(content: Text('Your account was deleted.')));
+    } catch (e) {
+      m.showSnackBar(SnackBar(content: Text(authErrorMessage(e))));
+    }
   }
 
   @override
@@ -183,9 +217,11 @@ class ProfileScreen extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         child: Column(
           children: [
-             if (isAdmin) _Row('Admin panel', () => context.push('/admin')),
+            if (isAdmin) _Row('Admin panel', () => context.push('/admin')),
             _Row('Change photo', () => _changePhoto(context, ref, donor.uid)),
             _Row('Edit details', () => _edit(context, donor)),
+            _Row('Terms & Privacy', () => context.push('/terms-view')),
+            _Row('Delete my account', () => _deleteAccount(context, ref)),
             _Row('Log out', () => ref.read(authRepositoryProvider).signOut()),
           ],
         ),
@@ -275,7 +311,7 @@ class _EditSheetState extends ConsumerState<_EditSheet> {
               textCapitalization: TextCapitalization.words,
               decoration: const InputDecoration(hintText: 'Full name')),
           const SizedBox(height: 12),
-          Row(children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Expanded(
                 child: TextField(
                     controller: _district,

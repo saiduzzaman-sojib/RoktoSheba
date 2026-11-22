@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../../core/constants/dhaka_areas.dart';
 import '../../../core/constants/firestore_paths.dart';
 import '../../../core/utils/eligibility.dart';
 import '../../donors/models/donor.dart';
-import '../../../core/constants/dhaka_areas.dart';
+import '../../legal/consent.dart';
 
 /// "+8801712345678", "880 1712-345678" -> "01712345678"
 String normalizeMobile(String input) {
@@ -27,7 +28,9 @@ String authErrorMessage(Object e) {
       case 'email-already-in-use':
         return 'This mobile number is already registered. Please log in.';
       case 'weak-password':
-        return 'Password is too weak. Use at least 6 characters.';
+        return 'Password is too weak. Use at least 8 characters with letters and numbers.';
+      case 'requires-recent-login':
+        return 'Please log in again, then try once more.';
       case 'network-request-failed':
         return 'No internet connection. Please try again.';
       case 'too-many-requests':
@@ -92,7 +95,6 @@ class AuthRepository {
 
       final ap = areaPoint(area);
       final donor = Donor(
-        location: ap == null ? null : GeoPoint(ap.latitude, ap.longitude),
         uid: user.uid,
         name: name,
         bloodGroup: bloodGroup,
@@ -102,6 +104,7 @@ class AuthRepository {
         verified: false,
         lastDonation: lastDonation,
         photoB64: photoB64,
+        location: ap == null ? null : GeoPoint(ap.latitude, ap.longitude),
       );
 
       final batch = _db.batch();
@@ -110,6 +113,8 @@ class AuthRepository {
         'email': email,
         'role': 'user',
         'language': 'en',
+        'termsVersion': termsVersion,
+        'termsAcceptedAt': FieldValue.serverTimestamp(),
         'createdAt': FieldValue.serverTimestamp(),
       });
       batch.set(_db.collection(FS.donors).doc(user.uid), donor.toMap());
@@ -121,5 +126,19 @@ class AuthRepository {
       await user.delete();
       rethrow;
     }
+  }
+
+  /// Re-checks the password, removes the profile data, then the login itself.
+  Future<void> deleteAccount(String password) async {
+    final user = _auth.currentUser;
+    if (user == null || user.email == null) return;
+    await user.reauthenticateWithCredential(
+        EmailAuthProvider.credential(email: user.email!, password: password));
+    final batch = _db.batch();
+    batch.delete(_db.collection(FS.donorPrivate).doc(user.uid));
+    batch.delete(_db.collection(FS.donors).doc(user.uid));
+    batch.delete(_db.collection(FS.users).doc(user.uid));
+    await batch.commit();
+    await user.delete();
   }
 }

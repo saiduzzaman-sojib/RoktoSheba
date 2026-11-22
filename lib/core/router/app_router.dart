@@ -14,6 +14,8 @@ import '../../features/donors/presentation/donor_detail_screen.dart';
 import '../../features/donors/presentation/nearby_screen.dart';
 import '../../features/eligibility/eligibility_screen.dart';
 import '../../features/home/home_screen.dart';
+import '../../features/legal/consent.dart';
+import '../../features/legal/terms_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/requests/presentation/request_screen.dart';
 import '../../features/requests/presentation/request_status_screen.dart';
@@ -35,8 +37,7 @@ class _AuthRefresh extends ChangeNotifier {
 }
 
 const _authPages = ['/', '/login', '/register'];
-// Pages a logged-out visitor may open (proposal: visitors browse without login).
-const _publicPages = [..._authPages, '/camps', '/eligibility', '/compatibility'];
+const _publicPages = [..._authPages, '/camps', '/eligibility', '/compatibility', '/terms-view'];
 
 bool _isPublic(String loc) => _publicPages.contains(loc) || loc.startsWith('/blog');
 
@@ -49,16 +50,22 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     initialLocation: '/',
-    refreshListenable: refresh,
+    refreshListenable: Listenable.merge([refresh, termsAccepted]),
     redirect: (context, state) {
-      final loggedIn = FirebaseAuth.instance.currentUser != null;
       final loc = state.matchedLocation;
+      if (!termsAccepted.value) {
+        return loc == '/terms' ? null : '/terms';
+      }
+      if (loc == '/terms') return '/';
+      final loggedIn = FirebaseAuth.instance.currentUser != null;
       if (loggedIn && _authPages.contains(loc)) return '/home';
       if (!loggedIn && !_isPublic(loc)) return '/login';
       return null;
     },
     routes: [
       GoRoute(path: '/', builder: (_, _) => const SplashScreen()),
+      GoRoute(path: '/terms', builder: (_, _) => const TermsScreen()),
+      GoRoute(path: '/terms-view', builder: (_, _) => const TermsScreen(readOnly: true)),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
       GoRoute(path: '/eligibility', builder: (_, _) => const EligibilityScreen()),
