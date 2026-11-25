@@ -47,7 +47,7 @@ void _openSheet(BuildContext context, Widget child) => showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      backgroundColor: Colors.white,
+      backgroundColor: context.surface,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
       builder: (_) => child,
@@ -550,7 +550,7 @@ class _CampFormState extends ConsumerState<_CampForm> {
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-              color: Colors.white,
+              color: context.surface,
               borderRadius: BorderRadius.circular(15),
               border: Border.all(color: AppColors.border)),
           child: Text(DateFormat('EEE, d MMM yyyy · h:mm a').format(_date),

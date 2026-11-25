@@ -140,7 +140,7 @@ class _HospitalCard extends StatelessWidget {
                 width: 42,
                 height: 42,
                 decoration: BoxDecoration(
-                  color: AppColors.red.withOpacity(.1),
+                  color: AppColors.red.withValues(alpha: .1),
                   borderRadius: BorderRadius.circular(13),
                 ),
                 child: const Icon(Icons.local_hospital_rounded,

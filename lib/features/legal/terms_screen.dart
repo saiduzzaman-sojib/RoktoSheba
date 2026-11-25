@@ -60,7 +60,7 @@ class _TermsScreenState extends State<TermsScreen> {
           if (!widget.readOnly)
             Container(
               padding: const EdgeInsets.fromLTRB(22, 12, 22, 16),
-              decoration: BoxDecoration(color: Colors.white.withValues(alpha: .9)),
+              decoration: BoxDecoration(color: context.surface.withValues(alpha: .9)),
               child: Column(children: [
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,

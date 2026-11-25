@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:roktosheba/features/legal/hospitals/hospital_screen.dart';
+import 'package:roktosheba/features/hospitals/hospital_screen.dart';
 import '../../features/admin/admin_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
@@ -67,7 +67,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/', builder: (_, _) => const SplashScreen()),
       GoRoute(path: '/terms', builder: (_, _) => const TermsScreen()),
       GoRoute(path: '/terms-view', builder: (_, _) => const TermsScreen(readOnly: true)),
-      GoRoute(path: '/hospitals', builder: (_, __) => const HospitalScreen()),
+      GoRoute(path: '/hospitals', builder: (_, _) => const HospitalScreen()),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
       GoRoute(path: '/eligibility', builder: (_, _) => const EligibilityScreen()),

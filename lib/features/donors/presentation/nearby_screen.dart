@@ -260,7 +260,7 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                        color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                        color: context.surface, borderRadius: BorderRadius.circular(20)),
                     child: Row(children: [
                       Avatar(bytes: selected.donor.photoBytes, name: selected.donor.name, size: 44, radius: 14),
                       const SizedBox(width: 10),

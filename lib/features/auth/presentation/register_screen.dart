@@ -216,9 +216,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: context.surface,
                       borderRadius: BorderRadius.circular(15),
-                      border: Border.all(color: AppColors.border),
+                      border: Border.all(color: context.line),
                     ),
                     child: Row(
                       children: [
@@ -229,7 +229,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 : 'Last donation: ${DateFormat('d MMM yyyy').format(_last!)}',
                             style: TextStyle(
                                 fontSize: 15,
-                                color: _last == null ? AppColors.grey : AppColors.ink),
+                                color: _last == null ? context.textMuted : context.textMain),
                           ),
                         ),
                         if (_last != null)
