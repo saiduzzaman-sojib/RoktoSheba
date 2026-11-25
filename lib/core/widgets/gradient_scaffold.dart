@@ -13,7 +13,7 @@ class GradientScaffold extends StatelessWidget {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(gradient: AppColors.bgGradient),
+        decoration: BoxDecoration(gradient: context.bgGradient),
         child: child,
       ),
     );
