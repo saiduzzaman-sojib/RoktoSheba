@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/share_utils.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/avatar.dart';
 import '../../../core/widgets/back_link.dart';
 import '../../../core/widgets/gradient_scaffold.dart';
+import '../../ai/ai_insights_card.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../donors/models/donation.dart';
 import '../../donors/models/donor.dart';
@@ -95,6 +97,19 @@ class _RequesterView extends ConsumerWidget {
     if (ok == true) await ref.read(requestRepositoryProvider).setStatus(r.id, 'cancelled');
   }
 
+  Future<void> _share(BuildContext context) async {
+    final m = ScaffoldMessenger.of(context);
+    final ok = await ShareUtils.whatsApp(ShareUtils.requestText(
+      bloodGroup: r.bloodGroup,
+      units: r.units,
+      hospital: r.hospital,
+      area: r.area,
+      district: r.district,
+      urgency: r.urgency,
+    ));
+    if (!ok) m.showSnackBar(const SnackBar(content: Text('Could not open WhatsApp.')));
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final responses = ref.watch(responsesProvider(r.id)).value ?? const <RequestResponse>[];
@@ -115,7 +130,7 @@ class _RequesterView extends ConsumerWidget {
             Text(statusText,
                 style: TextStyle(
                     fontWeight: FontWeight.w800,
-                    color: r.isOpen ? AppColors.red : AppColors.green)),
+                    color: r.isOpen ? context.accent : AppColors.green)),
           ]),
           const SizedBox(height: 10),
           ClipRRect(
@@ -123,7 +138,7 @@ class _RequesterView extends ConsumerWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 8,
-              backgroundColor: AppColors.border,
+              backgroundColor: context.line,
               color: AppColors.red,
             ),
           ),
@@ -135,21 +150,50 @@ class _RequesterView extends ConsumerWidget {
               : 'This request is closed.'),
         ]),
       ),
+      if (r.isOpen && r.targetDonorId == null)
+        AiInsightsCard(request: r, donors: donors),
+      if (r.isOpen)
+        OutlinedButton.icon(
+          onPressed: () => _share(context),
+          icon: const Icon(Icons.share, size: 18),
+          label: const Text('Share on WhatsApp'),
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size.fromHeight(52),
+            foregroundColor: context.textMain,
+            side: BorderSide(color: context.line),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          ),
+        ),
       if (accepted.isEmpty && r.isOpen)
         const FieldLabel('Waiting for donors to accept. Their contact appears here when they do.'),
       for (final a in accepted)
         AppCard(
-          child: Row(children: [
-            Avatar(bytes: a.photoBytes, name: a.donorName, size: 48, radius: 15),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('${a.donorName} ${a.donorBloodGroup}',
-                    style: const TextStyle(fontWeight: FontWeight.w800)),
-                FieldLabel(a.donorMobile ?? ''),
-              ]),
-            ),
-            if ((a.donorMobile ?? '').isNotEmpty) ContactButtons(a.donorMobile!),
+          child: Column(children: [
+            Row(children: [
+              Avatar(bytes: a.photoBytes, name: a.donorName, size: 48, radius: 15),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('${a.donorName} ${a.donorBloodGroup}',
+                      style: const TextStyle(fontWeight: FontWeight.w800)),
+                  FieldLabel(a.donorMobile ?? ''),
+                ]),
+              ),
+              if ((a.donorMobile ?? '').isNotEmpty) ContactButtons(a.donorMobile!),
+            ]),
+            if ((a.donorMobile ?? '').isNotEmpty)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: () => ShareUtils.whatsApp(
+                    'Assalamu alaikum ${a.donorName}, thank you for accepting my '
+                    'blood request for ${r.bloodGroup} at ${r.hospital}. 🙏',
+                    phone: a.donorMobile,
+                  ),
+                  icon: const Icon(Icons.chat, size: 18),
+                  label: const Text('WhatsApp'),
+                ),
+              ),
           ]),
         ),
       if (r.isOpen) ...[
@@ -160,8 +204,8 @@ class _RequesterView extends ConsumerWidget {
         Center(
           child: TextButton(
             onPressed: () => _cancel(context, ref),
-            child: const Text('Cancel request',
-                style: TextStyle(color: AppColors.red, fontWeight: FontWeight.w800)),
+            child: Text('Cancel request',
+                style: TextStyle(color: context.accent, fontWeight: FontWeight.w800)),
           ),
         ),
       ],
@@ -238,9 +282,14 @@ class _DonorView extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-              color: const Color(0xFFE3F3EF), borderRadius: BorderRadius.circular(22)),
-          child: const Text('You accepted this request. Thank you! 🎉',
-              style: TextStyle(fontWeight: FontWeight.w800, color: AppColors.green)),
+              color: context.isDark
+                  ? AppColors.green.withValues(alpha: .22)
+                  : const Color(0xFFE3F3EF),
+              borderRadius: BorderRadius.circular(22)),
+          child: Text('You accepted this request. Thank you! 🎉',
+              style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  color: context.isDark ? const Color(0xFF6FD8C4) : AppColors.green)),
         ),
         _Contact(r.id, r.requesterName),
         if (r.status == 'fulfilled' && me != null)
@@ -259,8 +308,8 @@ class _DonorView extends ConsumerWidget {
           Center(
             child: TextButton(
               onPressed: () => _respond(context, ref, me, false),
-              child: const Text('Not now',
-                  style: TextStyle(color: AppColors.grey, fontWeight: FontWeight.w800)),
+              child: Text('Not now',
+                  style: TextStyle(color: context.textMuted, fontWeight: FontWeight.w800)),
             ),
           ),
         const FieldLabel(
@@ -283,7 +332,7 @@ class _Contact extends ConsumerWidget {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const FieldLabel('Requester contact'),
             Text(name, style: const TextStyle(fontWeight: FontWeight.w800)),
-            Text(phone ?? 'Loading...', style: const TextStyle(color: AppColors.grey)),
+            Text(phone ?? 'Loading...', style: TextStyle(color: context.textMuted)),
           ]),
         ),
         if (phone != null && phone.isNotEmpty) ContactButtons(phone),
