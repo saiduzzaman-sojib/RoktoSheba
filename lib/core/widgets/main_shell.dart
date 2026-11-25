@@ -11,6 +11,7 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottom = MediaQuery.of(context).padding.bottom;
+    final isDark = context.isDark;
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Stack(
@@ -23,14 +24,21 @@ class MainShell extends StatelessWidget {
             child: Container(
               height: 66,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Color(0xFF352B3C), AppColors.ink]),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: isDark
+                      ? const [Color(0xFF26262C), Color(0xFF1B1B20)]
+                      : const [Color(0xFF352B3C), AppColors.ink],
+                ),
                 borderRadius: BorderRadius.circular(26),
+                border: isDark
+                    ? Border.all(color: Colors.white.withValues(alpha: .08))
+                    : null,
                 boxShadow: [
                   BoxShadow(
-                      color: AppColors.ink.withValues(alpha: .65),
+                      color: (isDark ? Colors.black : AppColors.ink)
+                          .withValues(alpha: .65),
                       blurRadius: 40,
                       offset: const Offset(0, 22),
                       spreadRadius: -10),
@@ -76,7 +84,7 @@ class _NavItem extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 12,
                     fontWeight: on ? FontWeight.w700 : FontWeight.w500,
-                    color: on ? Colors.white : const Color(0xFFD6CFDA))),
+                    color: on ? Colors.white : const Color(0xFFA8A3AD))),
             const SizedBox(height: 4),
             AnimatedContainer(
               duration: const Duration(milliseconds: 250),

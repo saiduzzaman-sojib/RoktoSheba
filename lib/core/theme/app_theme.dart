@@ -8,9 +8,11 @@ class AppTheme {
 
   static ThemeData _build(Brightness b) {
     final isDark = b == Brightness.dark;
-    final surface = isDark ? const Color(0xFF211C26) : Colors.white;
-    final text = isDark ? const Color(0xFFF4EEF2) : AppColors.ink;
-    final line = isDark ? const Color(0xFF3A3140) : AppColors.border;
+    final surface = isDark ? AppColors.dSurface : Colors.white;
+    final text = isDark ? AppColors.dText : AppColors.ink;
+    final muted = isDark ? AppColors.dMuted : AppColors.grey;
+    final line = isDark ? AppColors.dLine : AppColors.border;
+    final primary = isDark ? AppColors.dAccent : AppColors.red;
 
     final base = ThemeData(
       useMaterial3: true,
@@ -18,7 +20,7 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.red,
         brightness: b,
-        primary: isDark ? AppColors.redLight : AppColors.red,
+        primary: primary,
         surface: surface,
       ),
       scaffoldBackgroundColor: Colors.transparent,
@@ -27,10 +29,28 @@ class AppTheme {
     return base.copyWith(
       textTheme: GoogleFonts.plusJakartaSansTextTheme(base.textTheme)
           .apply(bodyColor: text, displayColor: text),
-      dividerColor: line,
+      dividerTheme: DividerThemeData(color: line),
+      iconTheme: IconThemeData(color: muted),
+      dialogTheme: DialogThemeData(
+        backgroundColor: surface,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: surface,
+        modalBackgroundColor: surface,
+        surfaceTintColor: Colors.transparent,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: isDark ? AppColors.dSurfaceAlt : AppColors.ink,
+        contentTextStyle: const TextStyle(color: Colors.white),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surface,
+        hintStyle: TextStyle(color: muted),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         border: OutlineInputBorder(
@@ -43,7 +63,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: AppColors.red, width: 2),
+          borderSide: BorderSide(color: primary, width: 2),
         ),
       ),
     );

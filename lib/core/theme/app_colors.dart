@@ -29,22 +29,43 @@ class AppColors {
     end: Alignment.bottomCenter,
     colors: [bgTop, bgBottom],
   );
+
+  // ---- Premium dark palette (neutral graphite) ----
+  static const dBgTop = Color(0xFF121214);
+  static const dBgBottom = Color(0xFF09090B);
+  static const dSurface = Color(0xFF18181C);
+  static const dSurfaceAlt = Color(0xFF202025);
+  static const dText = Color(0xFFF4F4F5);
+  static const dMuted = Color(0xFFA1A1AA);
+  static const dLine = Color(0xFF2C2C32);
+  static const dAccent = Color(0xFFF2584F);
+
+  /// Hero card in dark mode (wine tint)
+  static const dHero = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFF3B1E26), Color(0xFF1B1315), Color(0xFF4F1B22)],
+    stops: [0, .55, 1],
+  );
 }
+
 extension AppTheming on BuildContext {
   bool get isDark => Theme.of(this).brightness == Brightness.dark;
 
-  Color get surface => isDark ? const Color(0xFF211C26) : Colors.white;
+  Color get surface => isDark ? AppColors.dSurface : Colors.white;
   Color get surfaceAlt =>
-      isDark ? const Color(0xFF2A2330) : const Color(0xFFFFF6EF);
-  Color get textMain => isDark ? const Color(0xFFF4EEF2) : AppColors.ink;
-  Color get textMuted => isDark ? const Color(0xFFB5ABBA) : AppColors.grey;
-  Color get line => isDark ? const Color(0xFF3A3140) : AppColors.border;
+      isDark ? AppColors.dSurfaceAlt : const Color(0xFFFFF6EF);
+  Color get textMain => isDark ? AppColors.dText : AppColors.ink;
+  Color get textMuted => isDark ? AppColors.dMuted : AppColors.grey;
+  Color get line => isDark ? AppColors.dLine : AppColors.border;
+  Color get bgBase => isDark ? AppColors.dBgTop : Colors.white;
+  Color get accent => isDark ? AppColors.dAccent : AppColors.red;
 
   LinearGradient get bgGradient => isDark
       ? const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFF17131A), Color(0xFF0F0C12)],
+          colors: [AppColors.dBgTop, AppColors.dBgBottom],
         )
       : AppColors.bgGradient;
 }

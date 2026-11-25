@@ -15,7 +15,7 @@ class AppToggle extends StatelessWidget {
         width: 52,
         height: 30,
         decoration: BoxDecoration(
-          color: on ? AppColors.red : const Color(0xFF5B5160),
+          color: on ? AppColors.green : const Color(0xFF45454D),
           borderRadius: BorderRadius.circular(15),
         ),
         child: AnimatedAlign(

@@ -17,23 +17,39 @@ class AppCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDark;
+
+    final Gradient gradient = dark
+        ? (isDark ? AppColors.dHero : AppColors.darkGradient)
+        : LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [context.surface, context.surfaceAlt],
+          );
+
+    final Color border = dark
+        ? Colors.white.withValues(alpha: .10)
+        : isDark
+            ? Colors.white.withValues(alpha: .06)
+            : Colors.white;
+
+    final Color shadow = isDark
+        ? Colors.black.withValues(alpha: .5)
+        : dark
+            ? AppColors.ink.withValues(alpha: .4)
+            : AppColors.red.withValues(alpha: .18);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: double.infinity,
         padding: padding,
         decoration: BoxDecoration(
-          gradient: dark
-              ? AppColors.darkGradient
-              : LinearGradient(colors: [context.surface, context.surfaceAlt]),
+          gradient: gradient,
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(
-              color: dark || isDark ? Colors.white12 : Colors.white),
+          border: Border.all(color: border),
           boxShadow: [
             BoxShadow(
-              color: dark || isDark
-                  ? Colors.black.withValues(alpha: .4)
-                  : AppColors.red.withValues(alpha: .18),
+              color: shadow,
               blurRadius: 28,
               offset: const Offset(0, 12),
               spreadRadius: -12,

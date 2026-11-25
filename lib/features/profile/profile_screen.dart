@@ -10,6 +10,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/area_field.dart';
 import '../../core/widgets/avatar.dart';
 import '../../core/widgets/gradient_scaffold.dart';
+import '../../core/widgets/theme_mode_tile.dart';
 import '../admin/admin_provider.dart';
 import '../auth/data/auth_repository.dart';
 import '../auth/providers/auth_provider.dart';
@@ -132,9 +133,9 @@ class ProfileScreen extends ConsumerWidget {
                     width: 28,
                     height: 28,
                     decoration: BoxDecoration(
-                        color: AppColors.ink,
+                        color: context.isDark ? AppColors.red : AppColors.ink,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 3)),
+                        border: Border.all(color: context.bgBase, width: 3)),
                     child: const Icon(Icons.photo_camera, color: Colors.white, size: 13),
                   ),
                 ),
@@ -213,6 +214,7 @@ class ProfileScreen extends ConsumerWidget {
               ],
             ),
           ),
+      const ThemeModeTile(),
       AppCard(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         child: Column(
@@ -246,7 +248,7 @@ class _Row extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
-            const Text('>', style: TextStyle(color: AppColors.grey)),
+            Text('>', style: TextStyle(color: context.textMuted)),
           ],
         ),
       ),

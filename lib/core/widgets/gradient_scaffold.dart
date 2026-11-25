@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
-/// Full-screen cream gradient background used by every screen.
+/// Full-screen gradient background used by every screen.
 class GradientScaffold extends StatelessWidget {
   final Widget child;
   const GradientScaffold({super.key, required this.child});
@@ -48,5 +48,5 @@ class FieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(text,
-      style: const TextStyle(fontSize: 13, color: AppColors.grey));
+      style: TextStyle(fontSize: 13, color: context.textMuted));
 }
