@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import '../../core/constants/firestore_paths.dart';
+import '../../core/l10n/l10n.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/eligibility.dart';
 import '../../core/widgets/app_button.dart';
@@ -59,9 +59,9 @@ class _EligibilityScreenState extends ConsumerState<EligibilityScreen> {
         lastDate: now);
     if (d != null) {
       setState(() {
-      _last = d;
-      _touched = true;
-    });
+        _last = d;
+        _touched = true;
+      });
     }
   }
 
@@ -70,7 +70,7 @@ class _EligibilityScreenState extends ConsumerState<EligibilityScreen> {
     final w = double.tryParse(_wt.text.trim());
     if (a == null || w == null) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Enter your age and weight.')));
+          .showSnackBar(SnackBar(content: Text(tr('Enter your age and weight.'))));
       return;
     }
     setState(() => _result = checkEligibility(
@@ -88,12 +88,12 @@ class _EligibilityScreenState extends ConsumerState<EligibilityScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(q, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+          Text(tr(q), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
           const SizedBox(height: 12),
           Row(children: [
-            BloodChip(label: 'Yes', selected: value, onTap: () => onChanged(true)),
+            BloodChip(label: tr('Yes'), selected: value, onTap: () => onChanged(true)),
             const SizedBox(width: 8),
-            BloodChip(label: 'No', selected: !value, onTap: () => onChanged(false)),
+            BloodChip(label: tr('No'), selected: !value, onTap: () => onChanged(false)),
           ]),
         ],
       ),
@@ -105,31 +105,32 @@ class _EligibilityScreenState extends ConsumerState<EligibilityScreen> {
     final donor = ref.watch(myDonorProvider).value;
     final last = _touched ? _last : donor?.lastDonation;
     final r = _result;
+    final dark = context.isDark;
 
     return AppPage(navPadding: false, children: [
       const BackLink('Back'),
-      const Text('Can I donate?',
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -.6)),
-      const FieldLabel('Answer a few quick questions.'),
+      Text(tr('Can I donate?'),
+          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -.6)),
+      FieldLabel(tr('Answer a few quick questions.')),
       AppCard(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Your age and weight',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+            Text(tr('Your age and weight'),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
             const SizedBox(height: 12),
             Row(children: [
               Expanded(
                   child: TextField(
                       controller: _age,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(hintText: 'Age e.g. 25'))),
+                      decoration: InputDecoration(hintText: tr('Age e.g. 25')))),
               const SizedBox(width: 10),
               Expanded(
                   child: TextField(
                       controller: _wt,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      decoration: const InputDecoration(hintText: 'Kg e.g. 58'))),
+                      decoration: InputDecoration(hintText: tr('Kg e.g. 58')))),
             ]),
           ],
         ),
@@ -142,12 +143,12 @@ class _EligibilityScreenState extends ConsumerState<EligibilityScreen> {
             Expanded(
               child: Text(
                 last == null
-                    ? 'Last donation date (tap to set)'
-                    : 'Last donation: ${DateFormat('d MMM yyyy').format(last)}',
+                    ? tr('Last donation date (tap to set)')
+                    : trp('Last donation: {date}', {'date': fmtDate(last)}),
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
             ),
-            const Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.grey),
+            Icon(Icons.calendar_today_outlined, size: 18, color: context.textMuted),
           ],
         ),
       ),
@@ -157,32 +158,36 @@ class _EligibilityScreenState extends ConsumerState<EligibilityScreen> {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: r.ok ? const Color(0xFFE3F3EF) : const Color(0xFFFBE4E2),
+            color: r.ok
+                ? (dark ? AppColors.green.withValues(alpha: .22) : const Color(0xFFE3F3EF))
+                : (dark ? AppColors.red.withValues(alpha: .2) : const Color(0xFFFBE4E2)),
             borderRadius: BorderRadius.circular(22),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(r.ok ? 'You can donate 🎉' : 'Not yet eligible',
+              Text(r.ok ? tr('You can donate 🎉') : tr('Not yet eligible'),
                   style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w800,
-                      color: r.ok ? AppColors.green : AppColors.red)),
+                      color: r.ok
+                          ? (dark ? const Color(0xFF6FD8C4) : AppColors.green)
+                          : context.accent)),
               const SizedBox(height: 6),
               if (r.ok)
-                const Text('Turn on availability so nearby requests can reach you.',
-                    style: TextStyle(fontSize: 13, color: Color(0xFF3F3A44)))
+                Text(tr('Turn on availability so nearby requests can reach you.'),
+                    style: TextStyle(fontSize: 13, color: context.textMain))
               else
                 for (final reason in r.reasons)
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
-                    child: Text('• $reason',
-                        style: const TextStyle(fontSize: 13, color: Color(0xFF3F3A44))),
+                    child: Text('• ${tr(reason)}',
+                        style: TextStyle(fontSize: 13, color: context.textMain)),
                   ),
             ],
           ),
         ),
-      AppButton(label: 'Check eligibility', onPressed: () => _check(last)),
+      AppButton(label: tr('Check eligibility'), onPressed: () => _check(last)),
     ]);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/l10n/l10n.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar.dart';
@@ -21,7 +22,7 @@ class AiInsightsCard extends StatelessWidget {
           const Icon(Icons.auto_awesome, size: 18, color: AppColors.red),
           const SizedBox(width: 8),
           Expanded(
-            child: Text('AI insight: no matching donors found yet.',
+            child: Text(tr('AI insight: no matching donors found yet.'),
                 style: TextStyle(color: context.textMuted)),
           ),
         ]),
@@ -35,16 +36,16 @@ class AiInsightsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(children: [
-            Icon(Icons.auto_awesome, size: 18, color: AppColors.red),
-            SizedBox(width: 8),
-            Text('AI insight',
-                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
+          Row(children: [
+            const Icon(Icons.auto_awesome, size: 18, color: AppColors.red),
+            const SizedBox(width: 8),
+            Text(tr('AI insight'),
+                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15)),
           ]),
           const SizedBox(height: 10),
           Text(
-            'About ${expected.round()} of ${list.length} matching donors '
-            'are likely to respond.',
+            trp('About {n} of {total} matching donors are likely to respond.',
+                {'n': expected.round(), 'total': list.length}),
             style: const TextStyle(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 12),
@@ -59,7 +60,7 @@ class AiInsightsCard extends StatelessWidget {
                     Text(e.donor.name,
                         style: const TextStyle(fontWeight: FontWeight.w700)),
                     Text(
-                      '${e.donor.bloodGroup} · ${e.km == null ? e.donor.area : '${e.km!.toStringAsFixed(1)} km'}',
+                      '${e.donor.bloodGroup} · ${e.km == null ? e.donor.area : trp('{n} km', {'n': e.km!.toStringAsFixed(1)})}',
                       style: TextStyle(fontSize: 12, color: context.textMuted),
                     ),
                   ],
@@ -70,7 +71,7 @@ class AiInsightsCard extends StatelessWidget {
             const SizedBox(height: 10),
           ],
           Text(
-            'Model: logistic regression trained on simulated data.',
+            tr('Model: logistic regression trained on simulated data.'),
             style: TextStyle(fontSize: 11, color: context.textMuted),
           ),
         ],
@@ -93,7 +94,7 @@ class _Pill extends StatelessWidget {
         color: c.withValues(alpha: .15),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Text('${(p * 100).round()}%',
+      child: Text('${bnNum((p * 100).round())}%',
           style: TextStyle(color: c, fontWeight: FontWeight.w800, fontSize: 13)),
     );
   }

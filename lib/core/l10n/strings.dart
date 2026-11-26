@@ -289,4 +289,83 @@ const bnStrings = <String, String>{
   '{n} d ago': '{n} দিন আগে',
   'Camp today': 'আজ ক্যাম্প আছে',
   'Camp tomorrow': 'কাল ক্যাম্প আছে',
+
+  // ---- Login / Register ----
+  'Password reset by email only works for accounts created with an email.':
+      'ইমেইল দিয়ে খোলা অ্যাকাউন্টেই কেবল ইমেইলে পাসওয়ার্ড রিসেট করা যায়।',
+  'Password reset email sent.': 'পাসওয়ার্ড রিসেটের ইমেইল পাঠানো হয়েছে।',
+  'Enter your mobile or email': 'মোবাইল বা ইমেইল দিন',
+  'Enter a valid mobile number (01XXXXXXXXX)':
+      'সঠিক মোবাইল নম্বর দিন (01XXXXXXXXX)',
+  'Enter your password': 'পাসওয়ার্ড দিন',
+  'Could not open photos. Check permission.':
+      'ছবি খোলা যায়নি। অনুমতি দেখুন।',
+  'Enter your area.': 'আপনার এলাকা লিখুন।',
+  'Enter your full name': 'পুরো নাম লিখুন',
+  'Mobile 01XXXXXXXXX': 'মোবাইল নম্বর 01XXXXXXXXX',
+  'Required': 'আবশ্যক',
+  'Last donation: {date}': 'শেষ রক্তদান: {date}',
+  'Password (8+, letters and numbers)': 'পাসওয়ার্ড (৮+ অক্ষর, অক্ষর ও সংখ্যা)',
+  'Use at least 8 characters': 'কমপক্ষে ৮ অক্ষর দিন',
+  'Use letters and numbers': 'অক্ষর ও সংখ্যা দুটোই দিন',
+  'Roktosheba': 'রক্তসেবা',
+
+  // ---- Camps ----
+  'Sample camps and articles added.': 'নমুনা ক্যাম্প ও লেখা যোগ হয়েছে।',
+  'Could not load camps. Check your internet.':
+      'ক্যাম্প লোড করা যায়নি। ইন্টারনেট দেখুন।',
+  'No upcoming camps yet. Check back soon.':
+      'এখনো কোনো আসন্ন ক্যাম্প নেই। কিছুদিন পর দেখুন।',
+  'No upcoming camps yet.': 'এখনো কোনো আসন্ন ক্যাম্প নেই।',
+  'Location needed': 'লোকেশন দরকার',
+  'Allow location to sort camps by distance.':
+      'দূরত্ব অনুযায়ী ক্যাম্প সাজাতে লোকেশন চালু করুন।',
+  'Donation tips, myths and donor stories':
+      'রক্তদানের পরামর্শ, ভুল ধারণা ও দাতাদের গল্প',
+  'Reminder set. We will remind you on Home when it is close.':
+      'রিমাইন্ডার দেওয়া হয়েছে। সময় কাছে এলে হোমে জানানো হবে।',
+  'Reminder removed': 'রিমাইন্ডার সরানো হয়েছে',
+
+  // ---- Eligibility ----
+  'Enter your age and weight.': 'বয়স ও ওজন লিখুন।',
+  'Age e.g. 25': 'বয়স যেমন ২৫',
+  'Kg e.g. 58': 'কেজি যেমন ৫৮',
+  'Last donation date (tap to set)': 'শেষ রক্তদানের তারিখ (ট্যাপ করুন)',
+  'Fever, cold or infection now?': 'এখন জ্বর, সর্দি বা সংক্রমণ আছে?',
+  'Chronic condition?': 'দীর্ঘমেয়াদী রোগ আছে?',
+  'Turn on availability so nearby requests can reach you.':
+      '"প্রস্তুত" চালু করুন, যাতে কাছের অনুরোধ আপনার কাছে পৌঁছায়।',
+
+  // ---- Compatibility ----
+  'Blood compatibility': 'রক্তের সামঞ্জস্য',
+  'Who each group can give to, and receive from.':
+      'কোন গ্রুপ কাকে দিতে ও কার কাছ থেকে নিতে পারে।',
+  'All groups': 'সব গ্রুপ',
+  'Gives to: {list}': 'দিতে পারে: {list}',
+  'Receives from: {list}': 'নিতে পারে: {list}',
+  'O- is the universal donor. AB+ is the universal recipient.':
+      'O- সবাইকে দিতে পারে। AB+ সবার কাছ থেকে নিতে পারে।',
+
+  // ---- Donor detail ----
+  'Back to map': 'ম্যাপে ফিরুন',
+  'Could not load this donor.': 'এই দাতার তথ্য লোড করা যায়নি।',
+  'This donor no longer exists.': 'এই দাতা আর নেই।',
+  'Eligible and available': 'যোগ্য ও প্রস্তুত',
+  'Busy right now': 'এখন ব্যস্ত',
+  '✓ Verified donor': '✓ যাচাইকৃত দাতা',
+  'Last donation': 'শেষ রক্তদান',
+  'Not shared': 'জানানো হয়নি',
+  'Contact number': 'যোগাযোগ নম্বর',
+  'Shared after donor accepts': 'দাতা রাজি হলে জানানো হবে',
+  'Phone numbers stay private. The donor gets an alert and decides whether to accept.':
+      'ফোন নম্বর গোপন থাকে। দাতা অ্যালার্ট পান এবং রাজি হবেন কি না নিজে ঠিক করেন।',
+  'Send request to donor': 'দাতাকে অনুরোধ পাঠান',
+
+  // ---- Hospitals ----
+  'Location is turned off. Please turn on GPS.':
+      'লোকেশন বন্ধ আছে। জিপিএস চালু করুন।',
+  'Location permission is needed to find hospitals near you.':
+      'কাছের হাসপাতাল খুঁজতে লোকেশনের অনুমতি দরকার।',
+  'Hospital server busy. Try again in a moment.':
+      'হাসপাতালের সার্ভার ব্যস্ত। একটু পর আবার চেষ্টা করুন।',
 };

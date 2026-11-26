@@ -3,8 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import '../../../core/constants/blood.dart';
+import '../../../core/l10n/l10n.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/photo.dart';
 import '../../../core/widgets/app_button.dart';
@@ -53,8 +53,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         _photoBytes = base64Decode(b64);
       });
     } catch (_) {
-      messenger.showSnackBar(
-          const SnackBar(content: Text('Could not open photos. Check permission.')));
+      messenger.showSnackBar(SnackBar(
+          content: Text(tr('Could not open photos. Check permission.'))));
     }
   }
 
@@ -73,7 +73,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (!_form.currentState!.validate()) return;
     final messenger = ScaffoldMessenger.of(context);
     if (_area.text.trim().isEmpty) {
-      messenger.showSnackBar(const SnackBar(content: Text('Enter your area.')));
+      messenger.showSnackBar(SnackBar(content: Text(tr('Enter your area.'))));
       return;
     }
     setState(() => _busy = true);
@@ -90,7 +90,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           );
       // The router redirects to /home automatically.
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(authErrorMessage(e))));
+      messenger.showSnackBar(SnackBar(content: Text(tr(authErrorMessage(e)))));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -120,14 +120,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                   width: 88,
                                   height: 88,
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    color: context.surface,
                                     borderRadius: BorderRadius.circular(28),
                                     border: Border.all(
                                         color: AppColors.red.withValues(alpha: .5),
                                         width: 2),
                                   ),
-                                  child: const Icon(Icons.photo_camera_outlined,
-                                      color: AppColors.red, size: 30),
+                                  child: Icon(Icons.photo_camera_outlined,
+                                      color: context.accent, size: 30),
                                 ),
                           Positioned(
                             right: -4,
@@ -136,9 +136,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               width: 28,
                               height: 28,
                               decoration: BoxDecoration(
-                                  color: AppColors.ink,
+                                  color: context.isDark ? AppColors.red : AppColors.ink,
                                   shape: BoxShape.circle,
-                                  border: Border.all(color: Colors.white, width: 3)),
+                                  border: Border.all(color: context.bgBase, width: 3)),
                               child: const Icon(Icons.add, color: Colors.white, size: 14),
                             ),
                           ),
@@ -146,17 +146,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       ),
                     ),
                     const SizedBox(width: 14),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Join as a donor',
-                              style: TextStyle(
+                          Text(tr('Join as a donor'),
+                              style: const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: -.5)),
-                          SizedBox(height: 4),
-                          FieldLabel('Add a photo so people can recognise you'),
+                          const SizedBox(height: 4),
+                          FieldLabel(tr('Add a photo so people can recognise you')),
                         ],
                       ),
                     ),
@@ -166,12 +166,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 TextFormField(
                   controller: _name,
                   textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(hintText: 'Full name'),
+                  decoration: InputDecoration(hintText: tr('Full name')),
                   validator: (v) =>
-                      (v ?? '').trim().length < 2 ? 'Enter your full name' : null,
+                      (v ?? '').trim().length < 2 ? tr('Enter your full name') : null,
                 ),
                 const SizedBox(height: 16),
-                const FieldLabel('Blood group'),
+                FieldLabel(tr('Blood group')),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -188,10 +188,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 TextFormField(
                   controller: _mobile,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(hintText: 'Mobile 01XXXXXXXXX'),
+                  decoration: InputDecoration(hintText: tr('Mobile 01XXXXXXXXX')),
                   validator: (v) => isValidMobile(v ?? '')
                       ? null
-                      : 'Enter a valid mobile number (01XXXXXXXXX)',
+                      : tr('Enter a valid mobile number (01XXXXXXXXX)'),
                 ),
                 const SizedBox(height: 14),
                 Row(
@@ -201,9 +201,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       child: TextFormField(
                         controller: _district,
                         textCapitalization: TextCapitalization.words,
-                        decoration: const InputDecoration(hintText: 'District'),
+                        decoration: InputDecoration(hintText: tr('District')),
                         validator: (v) =>
-                            (v ?? '').trim().isEmpty ? 'Required' : null,
+                            (v ?? '').trim().isEmpty ? tr('Required') : null,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -225,8 +225,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         Expanded(
                           child: Text(
                             _last == null
-                                ? 'Last donation date (optional)'
-                                : 'Last donation: ${DateFormat('d MMM yyyy').format(_last!)}',
+                                ? tr('Last donation date (optional)')
+                                : trp('Last donation: {date}', {'date': fmtDate(_last!)}),
                             style: TextStyle(
                                 fontSize: 15,
                                 color: _last == null ? context.textMuted : context.textMain),
@@ -235,11 +235,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         if (_last != null)
                           GestureDetector(
                             onTap: () => setState(() => _last = null),
-                            child: const Icon(Icons.close, size: 18, color: AppColors.grey),
+                            child: Icon(Icons.close, size: 18, color: context.textMuted),
                           )
                         else
-                          const Icon(Icons.calendar_today_outlined,
-                              size: 18, color: AppColors.grey),
+                          Icon(Icons.calendar_today_outlined,
+                              size: 18, color: context.textMuted),
                       ],
                     ),
                   ),
@@ -249,37 +249,37 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   controller: _pw,
                   obscureText: _hide,
                   decoration: InputDecoration(
-                    hintText: 'Password (8+, letters and numbers)',
+                    hintText: tr('Password (8+, letters and numbers)'),
                     suffixIcon: IconButton(
                       icon: Icon(_hide ? Icons.visibility_off : Icons.visibility,
-                          color: AppColors.grey),
+                          color: context.textMuted),
                       onPressed: () => setState(() => _hide = !_hide),
                     ),
                   ),
                   validator: (v) {
                     final p = v ?? '';
-                    if (p.length < 8) return 'Use at least 8 characters';
+                    if (p.length < 8) return tr('Use at least 8 characters');
                     if (!RegExp(r'[A-Za-z]').hasMatch(p) ||
                         !RegExp(r'\d').hasMatch(p)) {
-                      return 'Use letters and numbers';
+                      return tr('Use letters and numbers');
                     }
                     return null;
                   },
                 ),
                 const SizedBox(height: 22),
-                AppButton(label: 'Create account', loading: _busy, onPressed: _submit),
+                AppButton(label: tr('Create account'), loading: _busy, onPressed: _submit),
                 const SizedBox(height: 18),
                 Center(
                   child: GestureDetector(
                     onTap: () => context.go('/login'),
-                    child: const Text.rich(TextSpan(
-                      style: TextStyle(fontSize: 13, color: AppColors.grey),
+                    child: Text.rich(TextSpan(
+                      style: TextStyle(fontSize: 13, color: context.textMuted),
                       children: [
-                        TextSpan(text: 'Have an account? '),
+                        TextSpan(text: tr('Have an account? ')),
                         TextSpan(
-                            text: 'Log in',
+                            text: tr('Log in'),
                             style: TextStyle(
-                                color: AppColors.red, fontWeight: FontWeight.w800)),
+                                color: context.accent, fontWeight: FontWeight.w800)),
                       ],
                     )),
                   ),

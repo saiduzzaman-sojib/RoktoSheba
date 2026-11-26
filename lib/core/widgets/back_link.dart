@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../l10n/l10n.dart';
 import '../theme/app_colors.dart';
 
 class BackLink extends StatelessWidget {
@@ -20,9 +21,9 @@ class BackLink extends StatelessWidget {
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Text('‹ $label',
-            style: const TextStyle(
-                fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.grey)),
+        child: Text('‹ ${tr(label)}',
+            style: TextStyle(
+                fontSize: 13, fontWeight: FontWeight.w700, color: context.textMuted)),
       ),
     );
   }

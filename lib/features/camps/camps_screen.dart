@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../core/l10n/l10n.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/distance.dart';
 import '../../core/widgets/app_button.dart';
@@ -30,7 +30,7 @@ class _CampsScreenState extends ConsumerState<CampsScreen> {
     setState(() => _seeding = true);
     try {
       await seedSampleData();
-      m.showSnackBar(const SnackBar(content: Text('Sample camps and articles added.')));
+      m.showSnackBar(SnackBar(content: Text(tr('Sample camps and articles added.'))));
     } catch (_) {
       m.showSnackBar(const SnackBar(
           content: Text('Failed. Is your account an admin in Firestore (users/uid/role)?')));
@@ -55,9 +55,11 @@ class _CampsScreenState extends ConsumerState<CampsScreen> {
           height: 160,
           child: Center(child: CircularProgressIndicator(color: AppColors.red))));
     } else if (async.hasError && !async.hasValue) {
-      body.add(const FieldLabel('Could not load camps. Check your internet.'));
+      body.add(FieldLabel(tr('Could not load camps. Check your internet.')));
     } else if (_mode == 'Upcoming') {
-      if (upcoming.isEmpty) body.add(const FieldLabel('No upcoming camps yet. Check back soon.'));
+      if (upcoming.isEmpty) {
+        body.add(FieldLabel(tr('No upcoming camps yet. Check back soon.')));
+      }
       for (final c in upcoming) {
         body.add(_CampTile(c: c));
       }
@@ -71,12 +73,14 @@ class _CampsScreenState extends ConsumerState<CampsScreen> {
       } else if (point == null) {
         body.add(AppCard(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('Location needed',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+            Text(tr('Location needed'),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
             const SizedBox(height: 6),
-            const FieldLabel('Allow location to sort camps by distance.'),
+            FieldLabel(tr('Allow location to sort camps by distance.')),
             const SizedBox(height: 14),
-            AppButton(label: 'Try again', onPressed: () => ref.invalidate(myLocationProvider)),
+            AppButton(
+                label: tr('Try again'),
+                onPressed: () => ref.invalidate(myLocationProvider)),
           ]),
         ));
       } else {
@@ -96,7 +100,7 @@ class _CampsScreenState extends ConsumerState<CampsScreen> {
           if (b.$2 == null) return -1;
           return a.$2!.compareTo(b.$2!);
         });
-        if (items.isEmpty) body.add(const FieldLabel('No upcoming camps yet.'));
+        if (items.isEmpty) body.add(FieldLabel(tr('No upcoming camps yet.')));
         for (final i in items) {
           body.add(_CampTile(c: i.$1, km: i.$2));
         }
@@ -104,11 +108,14 @@ class _CampsScreenState extends ConsumerState<CampsScreen> {
     }
 
     return AppPage(children: [
-      const Text('Donation camps',
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -.6)),
+      Text(tr('Donation camps'),
+          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -.6)),
       Row(children: [
         for (final x in ['Upcoming', 'Near me']) ...[
-          BloodChip(label: x, selected: _mode == x, onTap: () => setState(() => _mode = x)),
+          BloodChip(
+              label: tr(x),
+              selected: _mode == x,
+              onTap: () => setState(() => _mode = x)),
           const SizedBox(width: 8),
         ],
       ]),
@@ -116,15 +123,15 @@ class _CampsScreenState extends ConsumerState<CampsScreen> {
       AppCard(
         onTap: () => context.push('/blog'),
         child: Row(children: [
-          const Expanded(
+          Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text('Health tips & stories',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-              FieldLabel('Donation tips, myths and donor stories'),
+              Text(tr('Health tips & stories'),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+              FieldLabel(tr('Donation tips, myths and donor stories')),
             ]),
           ),
-          const Text('Read',
-              style: TextStyle(color: AppColors.red, fontWeight: FontWeight.w800)),
+          Text(tr('Read'),
+              style: TextStyle(color: context.accent, fontWeight: FontWeight.w800)),
         ]),
       ),
       if (isAdmin)
@@ -146,8 +153,8 @@ class _CampTile extends ConsumerWidget {
     final added = await ref.read(campRemindersProvider.notifier).toggle(c.id);
     m.showSnackBar(SnackBar(
         content: Text(added
-            ? 'Reminder set. We will remind you on Home when it is close.'
-            : 'Reminder removed')));
+            ? tr('Reminder set. We will remind you on Home when it is close.')
+            : tr('Reminder removed'))));
   }
 
   Future<void> _directions() async {
@@ -166,7 +173,7 @@ class _CampTile extends ConsumerWidget {
     final sub = [
       c.place,
       if (c.organizer.isNotEmpty) c.organizer,
-      if (km != null) '${km!.toStringAsFixed(1)} km',
+      if (km != null) trp('{n} km', {'n': km!.toStringAsFixed(1)}),
     ].join(' · ');
 
     return AppCard(
@@ -177,10 +184,10 @@ class _CampTile extends ConsumerWidget {
           decoration: BoxDecoration(
               gradient: AppColors.redGradient, borderRadius: BorderRadius.circular(16)),
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text(DateFormat('dd').format(c.date),
+            Text(bnNum(c.date.day.toString().padLeft(2, '0')),
                 style: const TextStyle(
                     color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800)),
-            Text(DateFormat('MMM').format(c.date),
+            Text(monthShort(c.date.month),
                 style: const TextStyle(color: Colors.white, fontSize: 12)),
           ]),
         ),
@@ -199,20 +206,20 @@ class _CampTile extends ConsumerWidget {
               GestureDetector(
                 behavior: HitTestBehavior.opaque,
                 onTap: () => _remind(context, ref),
-                child: Text(reminded ? 'Reminder set ✓' : 'Set reminder',
+                child: Text(reminded ? tr('Reminder set ✓') : tr('Set reminder'),
                     style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w800,
-                        color: reminded ? AppColors.green : AppColors.red)),
+                        color: reminded ? AppColors.green : context.accent)),
               ),
               if (c.location != null) ...[
                 const SizedBox(width: 18),
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onTap: _directions,
-                  child: const Text('Directions',
+                  child: Text(tr('Directions'),
                       style: TextStyle(
-                          fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.red)),
+                          fontSize: 13, fontWeight: FontWeight.w800, color: context.accent)),
                 ),
               ],
             ]),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../core/l10n/l10n.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/back_link.dart';
@@ -46,11 +47,10 @@ class _HospitalScreenState extends State<HospitalScreen> {
   }
 
   Future<void> _open(String url) async {
-    final ok = await launchUrl(Uri.parse(url),
-        mode: LaunchMode.externalApplication);
+    final ok = await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     if (!ok && mounted) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Could not open')));
+          .showSnackBar(SnackBar(content: Text(tr('Could not open'))));
     }
   }
 
@@ -67,17 +67,17 @@ class _HospitalScreenState extends State<HospitalScreen> {
           children: [
             const BackLink('Back'),
             const SizedBox(height: 10),
-            const Text('Nearby Hospitals',
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800)),
+            Text(tr('Nearby Hospitals'),
+                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800)),
             const SizedBox(height: 4),
-            Text('Within 8 km of your location',
+            Text(tr('Within 8 km of your location'),
                 style: TextStyle(color: context.textMuted)),
             const SizedBox(height: 16),
             TextField(
               onChanged: (v) => setState(() => _q = v),
-              decoration: const InputDecoration(
-                hintText: 'Search hospital name',
-                prefixIcon: Icon(Icons.search),
+              decoration: InputDecoration(
+                hintText: tr('Search hospital name'),
+                prefixIcon: const Icon(Icons.search),
               ),
             ),
             const SizedBox(height: 16),
@@ -86,16 +86,16 @@ class _HospitalScreenState extends State<HospitalScreen> {
             else if (_error != null)
               EmptyState(
                 icon: Icons.location_off_rounded,
-                title: 'Could not load hospitals',
-                message: _error!,
-                actionLabel: 'Try again',
+                title: tr('Could not load hospitals'),
+                message: tr(_error!),
+                actionLabel: tr('Try again'),
                 onAction: _load,
               )
             else if (shown.isEmpty)
-              const EmptyState(
+              EmptyState(
                 icon: Icons.local_hospital_outlined,
-                title: 'No hospitals found',
-                message: 'Try a different name or move to a bigger area.',
+                title: tr('No hospitals found'),
+                message: tr('Try a different name or move to a bigger area.'),
               )
             else
               for (final h in shown) ...[
@@ -143,8 +143,7 @@ class _HospitalCard extends StatelessWidget {
                   color: AppColors.red.withValues(alpha: .1),
                   borderRadius: BorderRadius.circular(13),
                 ),
-                child: const Icon(Icons.local_hospital_rounded,
-                    color: AppColors.red),
+                child: const Icon(Icons.local_hospital_rounded, color: AppColors.red),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -152,14 +151,12 @@ class _HospitalCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(h.name,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w700, fontSize: 15)),
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
                     const SizedBox(height: 2),
                     Text(
-                        '${h.distanceKm.toStringAsFixed(1)} km away'
+                        '${trp('{n} km away', {'n': h.distanceKm.toStringAsFixed(1)})}'
                         '${h.address != null ? ' · ${h.address}' : ''}',
-                        style: TextStyle(
-                            fontSize: 12.5, color: context.textMuted)),
+                        style: TextStyle(fontSize: 12.5, color: context.textMuted)),
                   ],
                 ),
               ),
@@ -173,17 +170,16 @@ class _HospitalCard extends StatelessWidget {
                   child: OutlinedButton.icon(
                     onPressed: onCall,
                     icon: const Icon(Icons.call, size: 18),
-                    label: const Text('Call'),
+                    label: Text(tr('Call')),
                   ),
                 ),
               if (onCall != null) const SizedBox(width: 10),
               Expanded(
                 child: FilledButton.icon(
                   onPressed: onDirections,
-                  style:
-                      FilledButton.styleFrom(backgroundColor: AppColors.red),
+                  style: FilledButton.styleFrom(backgroundColor: AppColors.red),
                   icon: const Icon(Icons.directions, size: 18),
-                  label: const Text('Directions'),
+                  label: Text(tr('Directions')),
                 ),
               ),
             ],

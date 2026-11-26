@@ -22,14 +22,32 @@ String bnNum(Object v) {
 }
 
 /// Translate a template and fill {name} placeholders.
-/// Numbers are shown with Bangla digits in Bangla mode.
+/// Numbers (and number-like text such as "2.5") use Bangla digits in Bangla mode.
 String trp(String en, Map<String, Object> params) {
   var s = tr(en);
   params.forEach((k, v) {
-        s = s.replaceAll('{$k}', (v is num || RegExp(r'^[0-9.]+$').hasMatch('$v')) ? bnNum(v) : '$v');
+    final t = '$v';
+    final numeric = v is num || RegExp(r'^[0-9.]+$').hasMatch(t);
+    s = s.replaceAll('{$k}', numeric ? bnNum(v) : t);
   });
   return s;
 }
+
+const _bnMonths = [
+  'জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন',
+  'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর',
+];
+const _enMonths = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
+String monthShort(int month) =>
+    isBn ? _bnMonths[month - 1] : _enMonths[month - 1];
+
+/// 5 Feb 2027  /  ৫ ফেব্রুয়ারি ২০২৭
+String fmtDate(DateTime d) =>
+    '${bnNum(d.day)} ${monthShort(d.month)} ${bnNum(d.year)}';
 
 class LangNotifier extends Notifier<String> {
   static const _key = 'lang';

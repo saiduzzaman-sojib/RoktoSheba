@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
+import '../../../core/l10n/l10n.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/distance.dart';
 import '../../../core/widgets/app_button.dart';
@@ -37,20 +37,22 @@ class DonorDetailScreen extends ConsumerWidget {
       loading: () => const AppPage(navPadding: false, children: [
         SizedBox(height: 240, child: Center(child: CircularProgressIndicator(color: AppColors.red))),
       ]),
-      error: (_, _) => const AppPage(navPadding: false, children: [
-        BackLink('Back to map'),
-        FieldLabel('Could not load this donor.'),
+      error: (_, _) => AppPage(navPadding: false, children: [
+        const BackLink('Back to map'),
+        FieldLabel(tr('Could not load this donor.')),
       ]),
       data: (d) {
         if (d == null) {
-          return const AppPage(navPadding: false, children: [
-            BackLink('Back to map'),
-            FieldLabel('This donor no longer exists.'),
+          return AppPage(navPadding: false, children: [
+            const BackLink('Back to map'),
+            FieldLabel(tr('This donor no longer exists.')),
           ]);
         }
         String? dist;
         if (myLoc != null && d.location != null) {
-          dist = '${distanceKm(myLoc.latitude, myLoc.longitude, d.location!.latitude, d.location!.longitude).toStringAsFixed(1)} km away';
+          final km = distanceKm(myLoc.latitude, myLoc.longitude,
+              d.location!.latitude, d.location!.longitude);
+          dist = trp('{n} km away', {'n': km.toStringAsFixed(1)});
         }
         final ok = d.canBeContacted;
         return AppPage(navPadding: false, children: [
@@ -68,7 +70,7 @@ class DonorDetailScreen extends ConsumerWidget {
                     decoration: BoxDecoration(
                         gradient: AppColors.redGradient,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white, width: 3)),
+                        border: Border.all(color: context.surface, width: 3)),
                     child: Text(d.bloodGroup,
                         style: const TextStyle(
                             color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800)),
@@ -79,27 +81,27 @@ class DonorDetailScreen extends ConsumerWidget {
               Text(d.name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800)),
               FieldLabel('${d.area}, ${d.district}${dist == null ? '' : ' · $dist'}'),
               const SizedBox(height: 10),
-              Text(ok ? 'Eligible and available' : 'Busy right now',
+              Text(ok ? tr('Eligible and available') : tr('Busy right now'),
                   style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color: ok ? AppColors.green : AppColors.red)),
+                      color: ok ? AppColors.green : context.accent)),
               if (d.verified)
-                const Padding(
-                  padding: EdgeInsets.only(top: 6),
-                  child: Text('✓ Verified donor',
-                      style: TextStyle(
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text(tr('✓ Verified donor'),
+                      style: const TextStyle(
                           fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.green)),
                 ),
             ]),
           ),
-          _row('Last donation',
-              d.lastDonation == null ? 'Not shared' : DateFormat('d MMM yyyy').format(d.lastDonation!)),
-          _row('Contact number', 'Shared after donor accepts'),
-          const FieldLabel(
-              'Phone numbers stay private. The donor gets an alert and decides whether to accept.'),
+          _row(tr('Last donation'),
+              d.lastDonation == null ? tr('Not shared') : fmtDate(d.lastDonation!)),
+          _row(tr('Contact number'), tr('Shared after donor accepts')),
+          FieldLabel(tr(
+              'Phone numbers stay private. The donor gets an alert and decides whether to accept.')),
           AppButton(
-            label: 'Send request to donor',
+            label: tr('Send request to donor'),
             onPressed: ok
                 ? () => context.go('/request', extra: {
                       'uid': d.uid,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
+import '../../../core/l10n/l10n.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/share_utils.dart';
 import '../../../core/widgets/app_button.dart';
@@ -25,7 +25,9 @@ Widget _header(BloodRequest r) => AppCard(
         const SizedBox(width: 12),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('${r.units} unit${r.units == 1 ? '' : 's'} · ${r.urgency}',
+            Text(
+                trp(r.units == 1 ? '{n} unit · {urgency}' : '{n} units · {urgency}',
+                    {'n': r.units, 'urgency': tr(r.urgency)}),
                 style: const TextStyle(fontSize: 12, color: Colors.white70)),
             Text(r.hospital,
                 style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
@@ -60,15 +62,15 @@ class RequestStatusScreen extends ConsumerWidget {
             height: 240,
             child: Center(child: CircularProgressIndicator(color: AppColors.red))),
       ]),
-      error: (_, _) => const AppPage(navPadding: false, children: [
-        BackLink('Back'),
-        FieldLabel('Could not load this request.'),
+      error: (_, _) => AppPage(navPadding: false, children: [
+        const BackLink('Back'),
+        FieldLabel(tr('Could not load this request.')),
       ]),
       data: (r) {
         if (r == null) {
-          return const AppPage(navPadding: false, children: [
-            BackLink('Back'),
-            FieldLabel('This request no longer exists.'),
+          return AppPage(navPadding: false, children: [
+            const BackLink('Back'),
+            FieldLabel(tr('This request no longer exists.')),
           ]);
         }
         return r.requesterId == me ? _RequesterView(r) : _DonorView(r);
@@ -87,10 +89,10 @@ class _RequesterView extends ConsumerWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
-        title: const Text('Cancel this request?'),
+        title: Text(tr('Cancel this request?')),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('No')),
-          TextButton(onPressed: () => Navigator.pop(c, true), child: const Text('Yes, cancel')),
+          TextButton(onPressed: () => Navigator.pop(c, false), child: Text(tr('No'))),
+          TextButton(onPressed: () => Navigator.pop(c, true), child: Text(tr('Yes, cancel'))),
         ],
       ),
     );
@@ -107,7 +109,7 @@ class _RequesterView extends ConsumerWidget {
       district: r.district,
       urgency: r.urgency,
     ));
-    if (!ok) m.showSnackBar(const SnackBar(content: Text('Could not open WhatsApp.')));
+    if (!ok) m.showSnackBar(SnackBar(content: Text(tr('Could not open WhatsApp.'))));
   }
 
   @override
@@ -117,7 +119,7 @@ class _RequesterView extends ConsumerWidget {
     final donors = ref.watch(availableDonorsProvider).value ?? const <Donor>[];
     final alerted = donors.where((d) => donorMatchesRequest(d, r)).length;
     final progress = (accepted.length / r.units).clamp(0.0, 1.0);
-    final statusText = r.isOpen ? 'Open' : r.status == 'fulfilled' ? 'Fulfilled' : 'Cancelled';
+    final statusText = tr(r.isOpen ? 'Open' : r.status == 'fulfilled' ? 'Fulfilled' : 'Cancelled');
 
     return AppPage(navPadding: false, children: [
       const BackLink('Back'),
@@ -125,7 +127,9 @@ class _RequesterView extends ConsumerWidget {
       AppCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text('${accepted.length} of ${r.units} donors accepted',
+            Text(
+                trp('{n} of {total} donors accepted',
+                    {'n': accepted.length, 'total': r.units}),
                 style: const TextStyle(fontWeight: FontWeight.w800)),
             Text(statusText,
                 style: TextStyle(
@@ -145,9 +149,13 @@ class _RequesterView extends ConsumerWidget {
           const SizedBox(height: 10),
           FieldLabel(r.isOpen
               ? (r.targetDonorId != null
-                  ? 'Waiting for the donor you asked.'
-                  : '$alerted compatible donor${alerted == 1 ? '' : 's'} nearby ${alerted == 1 ? 'has' : 'have'} been alerted.')
-              : 'This request is closed.'),
+                  ? tr('Waiting for the donor you asked.')
+                  : trp(
+                      alerted == 1
+                          ? '{n} compatible donor nearby has been alerted.'
+                          : '{n} compatible donors nearby have been alerted.',
+                      {'n': alerted}))
+              : tr('This request is closed.')),
         ]),
       ),
       if (r.isOpen && r.targetDonorId == null)
@@ -156,7 +164,7 @@ class _RequesterView extends ConsumerWidget {
         OutlinedButton.icon(
           onPressed: () => _share(context),
           icon: const Icon(Icons.share, size: 18),
-          label: const Text('Share on WhatsApp'),
+          label: Text(tr('Share on WhatsApp')),
           style: OutlinedButton.styleFrom(
             minimumSize: const Size.fromHeight(52),
             foregroundColor: context.textMain,
@@ -165,7 +173,7 @@ class _RequesterView extends ConsumerWidget {
           ),
         ),
       if (accepted.isEmpty && r.isOpen)
-        const FieldLabel('Waiting for donors to accept. Their contact appears here when they do.'),
+        FieldLabel(tr('Waiting for donors to accept. Their contact appears here when they do.')),
       for (final a in accepted)
         AppCard(
           child: Column(children: [
@@ -191,20 +199,20 @@ class _RequesterView extends ConsumerWidget {
                     phone: a.donorMobile,
                   ),
                   icon: const Icon(Icons.chat, size: 18),
-                  label: const Text('WhatsApp'),
+                  label: Text(tr('WhatsApp')),
                 ),
               ),
           ]),
         ),
       if (r.isOpen) ...[
         AppButton(
-          label: 'Mark as fulfilled',
+          label: tr('Mark as fulfilled'),
           onPressed: () => ref.read(requestRepositoryProvider).setStatus(r.id, 'fulfilled'),
         ),
         Center(
           child: TextButton(
             onPressed: () => _cancel(context, ref),
-            child: Text('Cancel request',
+            child: Text(tr('Cancel request'),
                 style: TextStyle(color: context.accent, fontWeight: FontWeight.w800)),
           ),
         ),
@@ -224,14 +232,16 @@ class _DonorView extends ConsumerWidget {
     if (accept) {
       if (!bloodCompatible(me.bloodGroup, r.bloodGroup)) {
         m.showSnackBar(SnackBar(
-            content: Text('${me.bloodGroup} blood cannot be given to ${r.bloodGroup}.')));
+            content: Text(trp('{group} blood cannot be given to {need}.',
+                {'group': me.bloodGroup, 'need': r.bloodGroup}))));
         return;
       }
       if (!me.canBeContacted) {
         m.showSnackBar(SnackBar(
             content: Text(!me.eligibleNow
-                ? 'You can donate again from ${DateFormat('d MMM yyyy').format(me.nextEligible!)}.'
-                : 'Turn on availability on the Home screen first.')));
+                ? trp('You can donate again from {date}.',
+                    {'date': fmtDate(me.nextEligible!)})
+                : tr('Turn on availability on the Home screen first.'))));
         return;
       }
     }
@@ -245,9 +255,11 @@ class _DonorView extends ConsumerWidget {
             accept: accept,
           );
       m.showSnackBar(SnackBar(
-          content: Text(accept ? 'Thank you! The requester was notified.' : 'Request declined.')));
+          content: Text(accept
+              ? tr('Thank you! The requester was notified.')
+              : tr('Request declined.'))));
     } catch (_) {
-      m.showSnackBar(const SnackBar(content: Text('Could not send. Check your internet.')));
+      m.showSnackBar(SnackBar(content: Text(tr('Could not send. Check your internet.'))));
     }
   }
 
@@ -257,9 +269,9 @@ class _DonorView extends ConsumerWidget {
       await ref
           .read(donorRepositoryProvider)
           .logDonation(me.uid, DateTime.now(), place: r.hospital, requestId: r.id);
-      m.showSnackBar(const SnackBar(content: Text('Donation logged. Thank you!')));
+      m.showSnackBar(SnackBar(content: Text(tr('Donation logged. Thank you!'))));
     } catch (_) {
-      m.showSnackBar(const SnackBar(content: Text('Could not save. Check your internet.')));
+      m.showSnackBar(SnackBar(content: Text(tr('Could not save. Check your internet.'))));
     }
   }
 
@@ -275,9 +287,10 @@ class _DonorView extends ConsumerWidget {
     return AppPage(navPadding: false, children: [
       const BackLink('Back'),
       _header(r),
-      _infoRow('Requested by', r.requesterName),
-      if (km != null) _infoRow('Distance', '${km.toStringAsFixed(1)} km away'),
-      _infoRow('Posted', timeAgo(r.createdAt)),
+      _infoRow(tr('Requested by'), r.requesterName),
+      if (km != null)
+        _infoRow(tr('Distance'), trp('{n} km away', {'n': km.toStringAsFixed(1)})),
+      _infoRow(tr('Posted'), timeAgoTr(r.createdAt)),
       if (accepted) ...[
         Container(
           padding: const EdgeInsets.all(16),
@@ -286,7 +299,7 @@ class _DonorView extends ConsumerWidget {
                   ? AppColors.green.withValues(alpha: .22)
                   : const Color(0xFFE3F3EF),
               borderRadius: BorderRadius.circular(22)),
-          child: Text('You accepted this request. Thank you! 🎉',
+          child: Text(tr('You accepted this request. Thank you! 🎉'),
               style: TextStyle(
                   fontWeight: FontWeight.w800,
                   color: context.isDark ? const Color(0xFF6FD8C4) : AppColors.green)),
@@ -294,26 +307,29 @@ class _DonorView extends ConsumerWidget {
         _Contact(r.id, r.requesterName),
         if (r.status == 'fulfilled' && me != null)
           logged
-              ? const FieldLabel('Donation logged ✓')
+              ? FieldLabel(tr('Donation logged ✓'))
               : AppButton(
-                  label: 'I donated, log it', onPressed: () => _logDonation(context, ref, me)),
+                  label: tr('I donated, log it'),
+                  onPressed: () => _logDonation(context, ref, me)),
       ] else if (!r.isOpen)
         FieldLabel(r.status == 'fulfilled'
-            ? 'This request was fulfilled.'
-            : 'This request was cancelled.')
+            ? tr('This request was fulfilled.')
+            : tr('This request was cancelled.'))
       else if (me != null) ...[
-        if (resp != null) const FieldLabel('You declined this request. You can still accept.'),
-        AppButton(label: 'Accept & share my contact', onPressed: () => _respond(context, ref, me, true)),
+        if (resp != null) FieldLabel(tr('You declined this request. You can still accept.')),
+        AppButton(
+            label: tr('Accept & share my contact'),
+            onPressed: () => _respond(context, ref, me, true)),
         if (resp == null)
           Center(
             child: TextButton(
               onPressed: () => _respond(context, ref, me, false),
-              child: Text('Not now',
+              child: Text(tr('Not now'),
                   style: TextStyle(color: context.textMuted, fontWeight: FontWeight.w800)),
             ),
           ),
-        const FieldLabel(
-            'Your phone number is shared only if you accept, and only with this requester.'),
+        FieldLabel(tr(
+            'Your phone number is shared only if you accept, and only with this requester.')),
       ],
     ]);
   }
@@ -330,9 +346,9 @@ class _Contact extends ConsumerWidget {
       child: Row(children: [
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const FieldLabel('Requester contact'),
+            FieldLabel(tr('Requester contact')),
             Text(name, style: const TextStyle(fontWeight: FontWeight.w800)),
-            Text(phone ?? 'Loading...', style: TextStyle(color: context.textMuted)),
+            Text(phone ?? tr('Loading...'), style: TextStyle(color: context.textMuted)),
           ]),
         ),
         if (phone != null && phone.isNotEmpty) ContactButtons(phone),
