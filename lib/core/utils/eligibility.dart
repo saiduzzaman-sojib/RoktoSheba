@@ -1,3 +1,5 @@
+import '../l10n/l10n.dart';
+
 /// Waiting period between donations. The admin can change it in config/eligibility;
 /// admin_provider.dart keeps this value in sync.
 int globalGapDays = 90;
@@ -27,6 +29,7 @@ class EligibilityResult {
 DateTime? nextEligibleDate(DateTime? lastDonation, {int? gapDays}) =>
     lastDonation?.add(Duration(days: gapDays ?? globalGapDays));
 
+/// Reasons come back already translated to the current language.
 EligibilityResult checkEligibility({
   required int age,
   required double weight,
@@ -37,17 +40,19 @@ EligibilityResult checkEligibility({
 }) {
   final r = <String>[];
   if (age < rules.minAge || age > rules.maxAge) {
-    r.add('Donors must be ${rules.minAge} to ${rules.maxAge} years old.');
+    r.add(trp('Donors must be {min} to {max} years old.',
+        {'min': rules.minAge, 'max': rules.maxAge}));
   }
   if (weight < rules.minWeight) {
-    r.add('Minimum weight is ${rules.minWeight.toStringAsFixed(0)} kg.');
+    r.add(trp('Minimum weight is {kg} kg.',
+        {'kg': rules.minWeight.toStringAsFixed(0)}));
   }
   final next = nextEligibleDate(lastDonation, gapDays: rules.gapDays);
   if (next != null && next.isAfter(DateTime.now())) {
-    r.add('Wait until ${next.day}/${next.month}/${next.year} '
-        '(${rules.gapDays} days after your last donation).');
+    r.add(trp('Wait until {date} ({days} days after your last donation).',
+        {'date': fmtDate(next), 'days': rules.gapDays}));
   }
-  if (hasInfection) r.add('Wait until you have fully recovered.');
-  if (hasChronicCondition) r.add('Please ask a doctor before donating.');
+  if (hasInfection) r.add(tr('Wait until you have fully recovered.'));
+  if (hasChronicCondition) r.add(tr('Please ask a doctor before donating.'));
   return EligibilityResult(r.isEmpty, r);
 }

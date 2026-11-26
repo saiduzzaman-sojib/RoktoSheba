@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../core/constants/dhaka_areas.dart';
 import '../../../core/constants/firestore_paths.dart';
+import '../../../core/l10n/l10n.dart';
 import '../../../core/utils/eligibility.dart';
 import '../../donors/models/donor.dart';
 import '../../legal/consent.dart';
@@ -17,6 +18,7 @@ String normalizeMobile(String input) {
 bool isValidMobile(String input) =>
     RegExp(r'^01[3-9]\d{8}$').hasMatch(normalizeMobile(input));
 
+/// Returns a message already translated to the current language.
 String authErrorMessage(Object e) {
   if (e is FirebaseAuthException) {
     switch (e.code) {
@@ -24,27 +26,29 @@ String authErrorMessage(Object e) {
       case 'user-not-found':
       case 'wrong-password':
       case 'invalid-email':
-        return 'Wrong mobile/email or password.';
+        return tr('Wrong mobile/email or password.');
       case 'email-already-in-use':
-        return 'This mobile number is already registered. Please log in.';
+        return tr('This mobile number is already registered. Please log in.');
       case 'weak-password':
-        return 'Password is too weak. Use at least 8 characters with letters and numbers.';
+        return tr(
+            'Password is too weak. Use at least 8 characters with letters and numbers.');
       case 'requires-recent-login':
-        return 'Please log in again, then try once more.';
+        return tr('Please log in again, then try once more.');
       case 'network-request-failed':
-        return 'No internet connection. Please try again.';
+        return tr('No internet connection. Please try again.');
       case 'too-many-requests':
-        return 'Too many attempts. Please wait a minute and try again.';
+        return tr('Too many attempts. Please wait a minute and try again.');
       case 'operation-not-allowed':
-        return 'Email/Password sign-in is not enabled in Firebase console.';
+        return tr('Email/Password sign-in is not enabled in Firebase console.');
       default:
-        return 'Login problem (${e.code}).';
+        return trp('Login problem ({code}).', {'code': e.code});
     }
   }
   if (e is FirebaseException && e.code == 'permission-denied') {
-    return 'Could not save your profile (permission denied). Check Firestore rules.';
+    return tr(
+        'Could not save your profile (permission denied). Check Firestore rules.');
   }
-  return 'Something went wrong. Please try again.';
+  return tr('Something went wrong. Please try again.');
 }
 
 class AuthRepository {
@@ -112,7 +116,7 @@ class AuthRepository {
         'name': name,
         'email': email,
         'role': 'user',
-        'language': 'en',
+        'language': currentLang,
         'termsVersion': termsVersion,
         'termsAcceptedAt': FieldValue.serverTimestamp(),
         'createdAt': FieldValue.serverTimestamp(),

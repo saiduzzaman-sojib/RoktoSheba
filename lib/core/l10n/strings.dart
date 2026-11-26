@@ -368,4 +368,71 @@ const bnStrings = <String, String>{
       'কাছের হাসপাতাল খুঁজতে লোকেশনের অনুমতি দরকার।',
   'Hospital server busy. Try again in a moment.':
       'হাসপাতালের সার্ভার ব্যস্ত। একটু পর আবার চেষ্টা করুন।',
+
+
+  // ---- Auth errors ----
+  'Wrong mobile/email or password.': 'মোবাইল/ইমেইল বা পাসওয়ার্ড ভুল।',
+  'This mobile number is already registered. Please log in.':
+      'এই মোবাইল নম্বর আগেই নিবন্ধিত। অনুগ্রহ করে লগ ইন করুন।',
+  'Password is too weak. Use at least 8 characters with letters and numbers.':
+      'পাসওয়ার্ড দুর্বল। কমপক্ষে ৮ অক্ষর, অক্ষর ও সংখ্যা দিন।',
+  'Please log in again, then try once more.':
+      'আবার লগ ইন করে নতুন করে চেষ্টা করুন।',
+  'No internet connection. Please try again.':
+      'ইন্টারনেট সংযোগ নেই। আবার চেষ্টা করুন।',
+  'Too many attempts. Please wait a minute and try again.':
+      'অনেকবার চেষ্টা হয়েছে। এক মিনিট পর আবার চেষ্টা করুন।',
+  'Email/Password sign-in is not enabled in Firebase console.':
+      'Firebase-এ ইমেইল/পাসওয়ার্ড লগ ইন চালু নেই।',
+  'Login problem ({code}).': 'লগ ইনে সমস্যা ({code})।',
+  'Could not save your profile (permission denied). Check Firestore rules.':
+      'প্রোফাইল সেভ করা যায়নি (অনুমতি নেই)। Firestore rules দেখুন।',
+  'Something went wrong. Please try again.':
+      'কিছু একটা ভুল হয়েছে। আবার চেষ্টা করুন।',
+
+  // ---- Eligibility reasons ----
+  'Donors must be {min} to {max} years old.':
+      'দাতার বয়স {min} থেকে {max} বছরের মধ্যে হতে হবে।',
+  'Minimum weight is {kg} kg.': 'সর্বনিম্ন ওজন {kg} কেজি।',
+  'Wait until {date} ({days} days after your last donation).':
+      '{date} পর্যন্ত অপেক্ষা করুন (শেষ রক্তদানের {days} দিন পর)।',
+  'Wait until you have fully recovered.': 'পুরোপুরি সুস্থ হওয়া পর্যন্ত অপেক্ষা করুন।',
+  'Please ask a doctor before donating.': 'রক্ত দেওয়ার আগে ডাক্তারের পরামর্শ নিন।',
+
+  // ---- Alert banner ----
+  'Urgent: {group} blood needed': 'জরুরি: {group} রক্ত দরকার',
+  '{n} km from you': 'আপনার থেকে {n} কিমি',
+  'now': 'এখন',
+
+  // ---- Terms ----
+  'What Roktosheba is': 'রক্তসেবা কী',
+  'Roktosheba helps people find voluntary blood donors nearby. We do not collect, store or supply blood.':
+      'রক্তসেবা কাছের স্বেচ্ছাসেবী রক্তদাতা খুঁজে পেতে সাহায্য করে। আমরা রক্ত সংগ্রহ, সংরক্ষণ বা সরবরাহ করি না।',
+  'Who can use it': 'কারা ব্যবহার করতে পারবেন',
+  'You must be 18 or older. Donate only if you are healthy and meet the donation rules. The final decision is always made by the hospital or blood bank, not this app.':
+      'বয়স ১৮ বা তার বেশি হতে হবে। সুস্থ থাকলে এবং রক্তদানের নিয়ম মানলেই কেবল রক্ত দিন। চূড়ান্ত সিদ্ধান্ত সবসময় হাসপাতাল বা ব্লাড ব্যাংকের, এই অ্যাপের নয়।',
+  'Not medical advice': 'এটি চিকিৎসা পরামর্শ নয়',
+  'The app gives general information only. It does not replace a doctor. In an emergency, call 999 or go to the nearest hospital.':
+      'অ্যাপে শুধু সাধারণ তথ্য দেওয়া হয়। এটি ডাক্তারের বিকল্প নয়। জরুরি অবস্থায় ৯৯৯-এ কল করুন বা কাছের হাসপাতালে যান।',
+  'Blood donation is free': 'রক্তদান বিনামূল্যে',
+  'Donating and requesting blood here is voluntary. Never ask for or offer money for blood.':
+      'এখানে রক্ত দেওয়া ও চাওয়া স্বেচ্ছায়। রক্তের জন্য কখনো টাকা চাইবেন না বা দেবেন না।',
+  'What we collect': 'আমরা যা সংগ্রহ করি',
+  'Your name, blood group, area, approximate location (rounded to about 100 m), mobile number, photo and donation dates.':
+      'আপনার নাম, রক্তের গ্রুপ, এলাকা, আনুমানিক লোকেশন (প্রায় ১০০ মিটারে গোল করা), মোবাইল নম্বর, ছবি ও রক্তদানের তারিখ।',
+  'Who sees it': 'কে দেখতে পায়',
+  'Signed-in users can see your name, photo, blood group, area and availability. Your mobile number is shared only with the person you choose to help, and only after you accept their request. We do not sell your data.':
+      'লগ ইন করা ব্যবহারকারীরা আপনার নাম, ছবি, রক্তের গ্রুপ, এলাকা ও প্রস্তুত থাকার অবস্থা দেখতে পায়। আপনার মোবাইল নম্বর শুধু সেই ব্যক্তিকে জানানো হয় যাকে আপনি সাহায্য করবেন, এবং তাঁর অনুরোধ রাজি হওয়ার পরেই। আমরা আপনার তথ্য বিক্রি করি না।',
+  'Your responsibilities': 'আপনার দায়িত্ব',
+  'Give true information. Do not post fake or spam requests. Do not harass anyone or misuse another person\'s contact details.':
+      'সঠিক তথ্য দিন। ভুয়া বা স্প্যাম অনুরোধ দেবেন না। কাউকে বিরক্ত করবেন না বা অন্যের যোগাযোগের তথ্য অপব্যবহার করবেন না।',
+  'Restrictions': 'নিষেধাজ্ঞা',
+  'Admins can restrict or remove accounts that misuse the app.':
+      'অ্যাপ অপব্যবহার করলে অ্যাডমিন অ্যাকাউন্ট সীমিত বা মুছে দিতে পারেন।',
+  'Your control': 'আপনার নিয়ন্ত্রণ',
+  'You can turn availability off, edit your details, or delete your account from Profile at any time. Deleting removes your profile and phone number.':
+      'আপনি যেকোনো সময় প্রোফাইল থেকে প্রস্তুত থাকা বন্ধ, তথ্য বদল বা অ্যাকাউন্ট মুছতে পারেন। মুছলে আপনার প্রোফাইল ও ফোন নম্বর সরে যায়।',
+  'Changes': 'পরিবর্তন',
+  'If these terms change, we will ask you to agree again.':
+      'শর্ত বদলালে আমরা আবার আপনার সম্মতি চাইব।',
 };

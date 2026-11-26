@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/requests/providers/request_provider.dart';
 import '../constants/firestore_paths.dart';
+import '../l10n/l10n.dart';
 import '../router/app_router.dart';
 import '../theme/app_colors.dart';
 import 'blood_drop.dart';
@@ -124,21 +125,23 @@ class _AlertHostState extends ConsumerState<AlertHost> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text('Urgent: ${s.request.bloodGroup} blood needed',
+                                Text(
+                                    trp('Urgent: {group} blood needed',
+                                        {'group': s.request.bloodGroup}),
                                     style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w800)),
                                 const SizedBox(height: 2),
                                 Text(
-                                    '${s.request.hospital}${s.km == null ? '' : ' · ${s.km!.toStringAsFixed(1)} km from you'}',
+                                    '${s.request.hospital}${s.km == null ? '' : ' · ${trp('{n} km from you', {'n': s.km!.toStringAsFixed(1)})}'}',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(color: Colors.white70, fontSize: 12)),
                               ]),
                         ),
-                        const Text('now',
-                            style: TextStyle(color: Colors.white54, fontSize: 11)),
+                        Text(tr('now'),
+                            style: const TextStyle(color: Colors.white54, fontSize: 11)),
                       ]),
                     ),
                   ),

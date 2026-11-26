@@ -1,6 +1,11 @@
+import '../../core/l10n/l10n.dart';
+
 class TermsSection {
-  final String title, body;
-  const TermsSection(this.title, this.body);
+  final String _title, _body;
+  const TermsSection(this._title, this._body);
+
+  String get title => tr(_title);
+  String get body => tr(_body);
 }
 
 const termsSections = <TermsSection>[

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import '../../core/l10n/l10n.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/utils/eligibility.dart';
@@ -19,7 +18,6 @@ import '../auth/providers/auth_provider.dart';
 import '../donors/models/donor.dart';
 import '../donors/providers/donor_provider.dart';
 
-final _fmt = DateFormat('d MMM yyyy');
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -53,7 +51,7 @@ class ProfileScreen extends ConsumerWidget {
       m.showSnackBar(SnackBar(
           content: Text(next.isAfter(DateTime.now())
               ? trp('Thank you! Eligible again on {date}.',
-                  {'date': _fmt.format(next)})
+                  {'date': fmtDate(next)})
               : tr('Donation saved.'))));
     } catch (_) {
       m.showSnackBar(SnackBar(content: Text(tr('Could not save. Check your internet.'))));
@@ -118,7 +116,7 @@ class ProfileScreen extends ConsumerWidget {
 
     final nextText = donor.lastDonation == null || donor.eligibleNow
         ? tr('Now')
-        : _fmt.format(donor.nextEligible!);
+        : fmtDate(donor.nextEligible!);
 
     return AppPage(children: [
       Row(
@@ -208,7 +206,7 @@ class ProfileScreen extends ConsumerWidget {
                   children: [
                     Text(d.place.isEmpty ? tr('Blood donation') : d.place,
                         style: const TextStyle(fontWeight: FontWeight.w800)),
-                    FieldLabel(_fmt.format(d.date)),
+                    FieldLabel(fmtDate(d.date)),
                   ],
                 ),
                 Text(tr('Completed'),
