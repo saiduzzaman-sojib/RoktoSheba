@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../l10n/l10n.dart';
 import '../theme/app_colors.dart';
 
 class MainShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
   const MainShell({super.key, required this.navigationShell});
 
-  static const _tabs = ['Home', 'Nearby', 'Request', 'Camps', 'Profile'];
+  static const _tabKeys = ['Home', 'Nearby', 'Request', 'Camps', 'Profile'];
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +48,9 @@ class MainShell extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  for (var i = 0; i < _tabs.length; i++)
+                  for (var i = 0; i < _tabKeys.length; i++)
                     _NavItem(
-                      label: _tabs[i],
+                      label: tr(_tabKeys[i]),
                       on: navigationShell.currentIndex == i,
                       onTap: () => navigationShell.goBranch(i,
                           initialLocation: i == navigationShell.currentIndex),

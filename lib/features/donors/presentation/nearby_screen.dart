@@ -5,6 +5,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../core/constants/blood.dart';
+import '../../../core/constants/dhaka_areas.dart';
+import '../../../core/l10n/l10n.dart';
 import '../../../core/services/location_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/distance.dart';
@@ -16,7 +18,6 @@ import '../../../core/widgets/gradient_scaffold.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../models/donor.dart';
 import '../providers/donor_provider.dart';
-import '../../../core/constants/dhaka_areas.dart';
 
 class _Item {
   final Donor donor;
@@ -40,7 +41,8 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
 
   double _zoom(double r) => r <= 2.5 ? 14 : r <= 5 ? 13 : r <= 10 ? 12 : 11;
 
-  String _radiusLabel(double r) => r == r.roundToDouble() ? '${r.toInt()} km' : '$r km';
+  String _radiusLabel(double r) =>
+      trp('{n} km', {'n': r == r.roundToDouble() ? r.toInt() : r});
 
   @override
   void dispose() {
@@ -50,17 +52,17 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
 
   Widget _message(String title, String body, String button, VoidCallback onTap) {
     return AppPage(children: [
-      const Text('Donors near you',
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -.6)),
+      Text(tr('Donors near you'),
+          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -.6)),
       AppCard(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+            Text(tr(title), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
             const SizedBox(height: 6),
-            FieldLabel(body),
+            FieldLabel(tr(body)),
             const SizedBox(height: 14),
-            AppButton(label: button, onPressed: onTap),
+            AppButton(label: tr(button), onPressed: onTap),
           ],
         ),
       ),
@@ -104,23 +106,28 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
 
     final items = <_Item>[];
     for (final d in all) {
-            final p = donorPoint(d);
+      final p = donorPoint(d);
       if (d.uid == myUid || p == null || !d.canBeContacted) continue;
       if (_group != 'All' && d.bloodGroup != _group) continue;
       final km = distanceKm(me.latitude, me.longitude, p.latitude, p.longitude);
       if (km <= _radius) items.add(_Item(d, km));
     }
     items.sort((a, b) => a.km.compareTo(b.km));
-    final selected = _selected == null ? null : items.where((i) => i.donor.uid == _selected!.uid).firstOrNull;
+    final selected = _selected == null
+        ? null
+        : items.where((i) => i.donor.uid == _selected!.uid).firstOrNull;
 
     return AppPage(children: [
-      const Text('Donors near you',
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -.6)),
+      Text(tr('Donors near you'),
+          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -.6)),
       SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(children: [
           for (final g in ['All', ...bloodGroups]) ...[
-            BloodChip(label: g, selected: _group == g, onTap: () => setState(() => _group = g)),
+            BloodChip(
+                label: g == 'All' ? tr('All') : g,
+                selected: _group == g,
+                onTap: () => setState(() => _group = g)),
             const SizedBox(width: 8),
           ],
         ]),
@@ -128,8 +135,9 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
       SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(children: [
-          const Padding(
-              padding: EdgeInsets.only(right: 10), child: FieldLabel('Within')),
+          Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: FieldLabel(tr('Within'))),
           for (final r in _radii) ...[
             BloodChip(
                 label: _radiusLabel(r),
@@ -244,7 +252,7 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                       decoration:
                           const BoxDecoration(color: Color(0xFF3DDC97), shape: BoxShape.circle)),
                   const SizedBox(width: 7),
-                  Text('Live · within ${_radiusLabel(_radius)}',
+                  Text(trp('Live · within {r}', {'r': _radiusLabel(_radius)}),
                       style: const TextStyle(
                           color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)),
                 ]),
@@ -273,12 +281,12 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(fontWeight: FontWeight.w800)),
                             FieldLabel(
-                                '${selected.donor.bloodGroup} · ${selected.km.toStringAsFixed(1)} km · ${selected.donor.area}'),
+                                '${selected.donor.bloodGroup} · ${trp('{n} km', {'n': selected.km.toStringAsFixed(1)})} · ${selected.donor.area}'),
                           ],
                         ),
                       ),
-                      const Text('View',
-                          style: TextStyle(color: AppColors.red, fontWeight: FontWeight.w800)),
+                      Text(tr('View'),
+                          style: TextStyle(color: context.accent, fontWeight: FontWeight.w800)),
                     ]),
                   ),
                 ),
@@ -287,8 +295,12 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
         ),
       ),
       FieldLabel(items.isEmpty
-          ? 'No available donors in range yet. Try a bigger radius or another blood group.'
-          : '${items.length} donor${items.length == 1 ? '' : 's'} · sorted by distance · tap one to see details'),
+          ? tr('No available donors in range yet. Try a bigger radius or another blood group.')
+          : trp(
+              items.length == 1
+                  ? '{n} donor · sorted by distance · tap one to see details'
+                  : '{n} donors · sorted by distance · tap one to see details',
+              {'n': items.length})),
       for (final i in items)
         AppCard(
           onTap: () => context.push('/donor/${i.donor.uid}'),
@@ -305,15 +317,16 @@ class _NearbyScreenState extends ConsumerState<NearbyScreen> {
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
                     TextSpan(
                         text: i.donor.bloodGroup,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.red)),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w800, color: context.accent)),
                   ])),
-                  FieldLabel('${i.km.toStringAsFixed(1)} km · ${i.donor.area} · Available${i.donor.verified ? ' · Verified ✓' : ''}'),
+                  FieldLabel(
+                      '${trp('{n} km', {'n': i.km.toStringAsFixed(1)})} · ${i.donor.area} · ${tr('Available')}${i.donor.verified ? ' · ${tr('Verified ✓')}' : ''}'),
                 ],
               ),
             ),
-            const Text('View',
-                style: TextStyle(color: AppColors.red, fontWeight: FontWeight.w800)),
+            Text(tr('View'),
+                style: TextStyle(color: context.accent, fontWeight: FontWeight.w800)),
           ]),
         ),
     ]);

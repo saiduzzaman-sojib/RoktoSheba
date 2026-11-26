@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../../core/l10n/l10n.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/app_toggle.dart';
@@ -19,30 +20,35 @@ class HomeScreen extends ConsumerWidget {
 
   String _greet() {
     final h = DateTime.now().hour;
-    return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+    return tr(h < 12
+        ? 'Good morning'
+        : h < 17
+            ? 'Good afternoon'
+            : 'Good evening');
   }
 
   Future<void> _toggle(BuildContext context, WidgetRef ref, Donor d) async {
     final m = ScaffoldMessenger.of(context);
     if (d.blocked) {
-      m.showSnackBar(const SnackBar(
-          content: Text('Your account is restricted by an admin.')));
+      m.showSnackBar(SnackBar(
+          content: Text(tr('Your account is restricted by an admin.'))));
       return;
     }
     if (!d.available && !d.eligibleNow) {
       m.showSnackBar(SnackBar(
-          content: Text(
-              'You can donate again from ${DateFormat('d MMM yyyy').format(d.nextEligible!)}.')));
+          content: Text(trp('You can donate again from {date}.',
+              {'date': DateFormat('d MMM yyyy').format(d.nextEligible!)}))));
       return;
     }
     try {
       await ref.read(donorRepositoryProvider).setAvailable(d.uid, !d.available);
       m.showSnackBar(SnackBar(
           content: Text(d.available
-              ? 'You are hidden from searches'
-              : 'You are visible to nearby requests')));
+              ? tr('You are hidden from searches')
+              : tr('You are visible to nearby requests'))));
     } catch (_) {
-      m.showSnackBar(const SnackBar(content: Text('Could not update. Check your internet.')));
+      m.showSnackBar(
+          SnackBar(content: Text(tr('Could not update. Check your internet.'))));
     }
   }
 
@@ -58,10 +64,11 @@ class HomeScreen extends ConsumerWidget {
     }
 
     final status = donor.available
-        ? 'Nearby requests will alert you'
+        ? tr('Nearby requests will alert you')
         : !donor.eligibleNow
-            ? 'Eligible again on ${DateFormat('d MMM yyyy').format(donor.nextEligible!)}'
-            : 'Hidden from donor search';
+            ? trp('Eligible again on {date}',
+                {'date': DateFormat('d MMM yyyy').format(donor.nextEligible!)})
+            : tr('Hidden from donor search');
 
     return AppPage(children: [
       Row(
@@ -91,10 +98,10 @@ class HomeScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Your status',
-                      style: TextStyle(fontSize: 13, color: Colors.white70)),
+                  Text(tr('Your status'),
+                      style: const TextStyle(fontSize: 13, color: Colors.white70)),
                   const SizedBox(height: 2),
-                  Text(donor.available ? 'Available to donate' : 'Not available',
+                  Text(donor.available ? tr('Available to donate') : tr('Not available'),
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
                   const SizedBox(height: 2),
                   Text(status,
@@ -110,10 +117,13 @@ class HomeScreen extends ConsumerWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-              color: const Color(0xFFFBE4E2), borderRadius: BorderRadius.circular(22)),
-          child: const Text(
-              'Your account is restricted by an admin, so you cannot post or answer requests.',
-              style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.red)),
+              color: context.isDark
+                  ? AppColors.red.withValues(alpha: .2)
+                  : const Color(0xFFFBE4E2),
+              borderRadius: BorderRadius.circular(22)),
+          child: Text(
+              tr('Your account is restricted by an admin, so you cannot post or answer requests.'),
+              style: TextStyle(fontWeight: FontWeight.w700, color: context.accent)),
         ),
       AppCard(
         onTap: () => context.go('/nearby'),
@@ -125,27 +135,49 @@ class HomeScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('${count ?? 0} donors available now',
+                  Text(trp('{n} donors available now', {'n': count ?? 0}),
                       style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-                  const FieldLabel('Open the live map'),
+                  FieldLabel(tr('Open the live map')),
                 ],
               ),
             ),
-            const Text('Map',
-                style: TextStyle(color: AppColors.red, fontWeight: FontWeight.w800)),
+            Text(tr('Map'),
+                style: TextStyle(color: context.accent, fontWeight: FontWeight.w800)),
           ],
         ),
       ),
       Row(children: [
-        Expanded(child: _Action('Find donor', 'Live map & list', () => context.go('/nearby'))),
+        Expanded(
+            child: _Action(tr('Find donor'), tr('Live map & list'),
+                () => context.go('/nearby'))),
         const SizedBox(width: 12),
-        Expanded(child: _Action('Request blood', 'Notify matches', () => context.go('/request'))),
+        Expanded(
+            child: _Action(tr('Request blood'), tr('Notify matches'),
+                () => context.go('/request'))),
       ]),
       Row(children: [
-        Expanded(child: _Action('Eligibility', 'Can I donate?', () => context.push('/eligibility'))),
+        Expanded(
+            child: _Action(tr('Eligibility'), tr('Can I donate?'),
+                () => context.push('/eligibility'))),
         const SizedBox(width: 12),
-        Expanded(child: _Action('Compatibility', 'Who gives to whom', () => context.push('/compatibility'))),
+        Expanded(
+            child: _Action(tr('Compatibility'), tr('Who gives to whom'),
+                () => context.push('/compatibility'))),
       ]),
+      AppCard(
+        onTap: () => context.push('/hospitals'),
+        child: Row(
+          children: [
+            Icon(Icons.local_hospital_rounded, color: context.accent),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(tr('Find nearby hospitals'),
+                  style: const TextStyle(fontWeight: FontWeight.w700)),
+            ),
+            Icon(Icons.chevron_right, color: context.textMuted),
+          ],
+        ),
+      ),
       const CampReminderSection(),
       const UrgentSection(),
     ]);

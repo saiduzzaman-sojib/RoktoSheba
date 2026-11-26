@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/l10n/l10n.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/gradient_scaffold.dart';
@@ -10,6 +11,16 @@ import '../providers/request_provider.dart';
 
 Future<void> callNumber(String n) => launchUrl(Uri(scheme: 'tel', path: n));
 Future<void> smsNumber(String n) => launchUrl(Uri(scheme: 'sms', path: n));
+
+/// "5 min ago" / "৫ মিনিট আগে" depending on the app language.
+String timeAgoTr(DateTime? t) {
+  if (t == null) return '';
+  final d = DateTime.now().difference(t);
+  if (d.inMinutes < 1) return tr('just now');
+  if (d.inMinutes < 60) return trp('{n} min ago', {'n': d.inMinutes});
+  if (d.inHours < 24) return trp('{n} h ago', {'n': d.inHours});
+  return trp('{n} d ago', {'n': d.inDays});
+}
 
 class ContactButtons extends StatelessWidget {
   final String number;
@@ -63,27 +74,31 @@ class RequestTile extends ConsumerWidget {
     String trail;
     Color color;
     if (mine) {
-      trail = r.isOpen ? 'Open' : r.status == 'fulfilled' ? 'Fulfilled' : 'Cancelled';
-      color = r.isOpen ? AppColors.red : r.status == 'fulfilled' ? AppColors.green : AppColors.grey;
+      trail = tr(r.isOpen ? 'Open' : r.status == 'fulfilled' ? 'Fulfilled' : 'Cancelled');
+      color = r.isOpen
+          ? context.accent
+          : r.status == 'fulfilled'
+              ? AppColors.green
+              : context.textMuted;
     } else {
       final resp = ref.watch(myResponseProvider(r.id)).value;
       if (resp == null) {
-        trail = 'Respond';
-        color = AppColors.red;
+        trail = tr('Respond');
+        color = context.accent;
       } else if (resp.accepted) {
-        trail = 'Accepted ✓';
+        trail = tr('Accepted ✓');
         color = AppColors.green;
       } else {
-        trail = 'Declined';
-        color = AppColors.grey;
+        trail = tr('Declined');
+        color = context.textMuted;
       }
     }
     final k = km;
     final parts = <String>[
-      '${r.units} unit${r.units == 1 ? '' : 's'}',
-      r.urgency,
-      if (k != null) '${k.toStringAsFixed(1)} km',
-      timeAgo(r.createdAt),
+      trp(r.units == 1 ? '{n} unit' : '{n} units', {'n': r.units}),
+      tr(r.urgency),
+      if (k != null) trp('{n} km', {'n': k.toStringAsFixed(1)}),
+      timeAgoTr(r.createdAt),
     ];
     return AppCard(
       onTap: () => context.push('/request/${r.id}'),
@@ -96,7 +111,7 @@ class RequestTile extends ConsumerWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
-            FieldLabel(parts.join(' · ')),
+            FieldLabel(parts.where((e) => e.isNotEmpty).join(' · ')),
           ]),
         ),
         const SizedBox(width: 8),
@@ -114,11 +129,11 @@ class UrgentSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final list = ref.watch(incomingRequestsProvider);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const Text('Urgent near you',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+      Text(tr('Urgent near you'),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
       const SizedBox(height: 12),
       if (list.isEmpty)
-        const AppCard(child: FieldLabel('No open requests need your blood group right now.'))
+        AppCard(child: FieldLabel(tr('No open requests need your blood group right now.')))
       else
         for (final i in list.take(3))
           Padding(

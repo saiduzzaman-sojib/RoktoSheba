@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'core/l10n/l10n.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
@@ -10,6 +11,7 @@ class RoktoshebaApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(langProvider);
     return MaterialApp.router(
       title: 'Roktosheba',
       debugShowCheckedModeBanner: false,
@@ -18,7 +20,7 @@ class RoktoshebaApp extends ConsumerWidget {
       themeMode: ref.watch(themeModeProvider),
       routerConfig: ref.watch(routerProvider),
       builder: (context, child) =>
-          AlertHost(child: child ?? const SizedBox.shrink()),
+          AlertHost(child: LangScope(child: child ?? const SizedBox.shrink())),
     );
   }
 }

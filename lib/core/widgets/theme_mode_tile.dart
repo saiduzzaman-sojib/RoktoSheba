@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../l10n/l10n.dart';
 import '../theme/app_colors.dart';
 import '../theme/theme_provider.dart';
 import 'app_card.dart';
@@ -14,17 +15,17 @@ class ThemeModeTile extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Appearance',
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+          Text(tr('Appearance'),
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             child: SegmentedButton<ThemeMode>(
               showSelectedIcon: false,
-              segments: const [
-                ButtonSegment(value: ThemeMode.system, label: Text('Auto')),
-                ButtonSegment(value: ThemeMode.light, label: Text('Light')),
-                ButtonSegment(value: ThemeMode.dark, label: Text('Dark')),
+              segments: [
+                ButtonSegment(value: ThemeMode.system, label: Text(tr('Auto'))),
+                ButtonSegment(value: ThemeMode.light, label: Text(tr('Light'))),
+                ButtonSegment(value: ThemeMode.dark, label: Text(tr('Dark'))),
               ],
               selected: {mode},
               onSelectionChanged: (s) =>

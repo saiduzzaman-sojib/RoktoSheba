@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import '../constants/dhaka_areas.dart';
+import '../l10n/l10n.dart';
 import '../theme/app_colors.dart';
 
 /// Text field that suggests areas while typing. Free text is still allowed.
 class AreaField extends StatelessWidget {
   final TextEditingController controller;
-  final String hint;
-  const AreaField({super.key, required this.controller, this.hint = 'Area'});
+  final String? hint;
+  const AreaField({super.key, required this.controller, this.hint});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class AreaField extends StatelessWidget {
         controller: c,
         focusNode: focus,
         textCapitalization: TextCapitalization.words,
-        decoration: InputDecoration(hintText: hint),
+        decoration: InputDecoration(hintText: hint ?? tr('Area')),
         onSubmitted: (_) => onSubmit(),
       ),
       optionsViewBuilder: (context, onSelected, options) => Align(
@@ -27,7 +28,7 @@ class AreaField extends StatelessWidget {
         child: Material(
           elevation: 6,
           borderRadius: BorderRadius.circular(14),
-          color: Colors.white,
+          color: context.surface,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 240, maxWidth: 260),
             child: ListView(
@@ -40,7 +41,7 @@ class AreaField extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       child: Row(children: [
-                        const Icon(Icons.place_outlined, size: 18, color: AppColors.red),
+                        Icon(Icons.place_outlined, size: 18, color: context.accent),
                         const SizedBox(width: 10),
                         Text(o, style: const TextStyle(fontWeight: FontWeight.w700)),
                       ]),

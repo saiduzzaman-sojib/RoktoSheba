@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/blood.dart';
+import '../../../core/l10n/l10n.dart';
 import '../../../core/services/location_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/area_field.dart';
 import '../../../core/widgets/blood_chip.dart';
 import '../../../core/widgets/gradient_scaffold.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -14,7 +16,6 @@ import '../../donors/models/donor.dart';
 import '../models/blood_request.dart';
 import '../providers/request_provider.dart';
 import 'request_widgets.dart';
-import '../../../core/widgets/area_field.dart';
 
 class RequestScreen extends ConsumerStatefulWidget {
   /// Set when opened from a donor's page: {uid, name, group, ts}.
@@ -69,15 +70,15 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
   Future<void> _post(Donor me) async {
     final m = ScaffoldMessenger.of(context);
     if (me.blocked) {
-      m.showSnackBar(const SnackBar(
-          content: Text('Your account is restricted. You cannot post requests.')));
+      m.showSnackBar(SnackBar(
+          content: Text(tr('Your account is restricted. You cannot post requests.'))));
       return;
     }
     final hospital = _hospital.text.trim();
     final district = _district.text.trim();
     final area = _area.text.trim();
     if (hospital.isEmpty || district.isEmpty) {
-      m.showSnackBar(const SnackBar(content: Text('Enter the hospital and district.')));
+      m.showSnackBar(SnackBar(content: Text(tr('Enter the hospital and district.'))));
       return;
     }
     setState(() => _busy = true);
@@ -105,7 +106,7 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
       setState(() => _target = null);
       context.push('/request/$id');
     } catch (_) {
-      m.showSnackBar(const SnackBar(content: Text('Could not post. Check your internet.')));
+      m.showSnackBar(SnackBar(content: Text(tr('Could not post. Check your internet.'))));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -116,61 +117,65 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
           AppCard(
             child: Row(children: [
               Expanded(
-                child: Text('Direct request to ${_target!['name']}',
+                child: Text(trp('Direct request to {name}', {'name': '${_target!['name']}'}),
                     style: const TextStyle(fontWeight: FontWeight.w800)),
               ),
               GestureDetector(
                 onTap: () => setState(() => _target = null),
-                child: const Icon(Icons.close, size: 18, color: AppColors.grey),
+                child: Icon(Icons.close, size: 18, color: context.textMuted),
               ),
             ]),
           ),
         FieldLabel(_target == null
-            ? 'Nearby matching donors are notified instantly.'
-            : 'Only this donor will be notified.'),
-        const FieldLabel('Blood group needed'),
+            ? tr('Nearby matching donors are notified instantly.')
+            : tr('Only this donor will be notified.')),
+        FieldLabel(tr('Blood group needed')),
         Wrap(spacing: 8, runSpacing: 8, children: [
           for (final g in groups)
             BloodChip(label: g, selected: _group == g, onTap: () => setState(() => _group = g)),
         ]),
-        const FieldLabel('Hospital'),
+        FieldLabel(tr('Hospital')),
         TextField(
             controller: _hospital,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(hintText: 'Hospital name')),
-        const FieldLabel('District and area'),
+            decoration: InputDecoration(hintText: tr('Hospital name'))),
+        FieldLabel(tr('District and area')),
         Row(children: [
           Expanded(
               child: TextField(
                   controller: _district,
                   textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(hintText: 'District'))),
+                  decoration: InputDecoration(hintText: tr('District')))),
           const SizedBox(width: 10),
           Expanded(child: AreaField(controller: _area)),
         ]),
         AppCard(
           child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text('Units needed', style: TextStyle(fontWeight: FontWeight.w800)),
+            Text(tr('Units needed'), style: const TextStyle(fontWeight: FontWeight.w800)),
             Row(children: [
               BloodChip(
                   label: '-', onTap: () => setState(() => _units = (_units - 1).clamp(1, 9))),
               const SizedBox(width: 14),
-              Text('$_units', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+              Text(bnNum(_units),
+                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
               const SizedBox(width: 14),
               BloodChip(
                   label: '+', onTap: () => setState(() => _units = (_units + 1).clamp(1, 9))),
             ]),
           ]),
         ),
-        const FieldLabel('Urgency'),
+        FieldLabel(tr('Urgency')),
         Wrap(spacing: 8, runSpacing: 8, children: [
           for (final u in _urgencies)
-            BloodChip(label: u, selected: _urgency == u, onTap: () => setState(() => _urgency = u)),
+            BloodChip(
+                label: tr(u),
+                selected: _urgency == u,
+                onTap: () => setState(() => _urgency = u)),
         ]),
-        const FieldLabel(
-            'Donors near your current location are alerted. For the best match, post from the hospital.'),
+        FieldLabel(tr(
+            'Donors near your current location are alerted. For the best match, post from the hospital.')),
         AppButton(
-            label: 'Post request & alert donors',
+            label: tr('Post request & alert donors'),
             loading: _busy,
             onPressed: () => _post(me)),
       ];
@@ -199,11 +204,15 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
         : bloodGroups;
     if (!groups.contains(_group)) _group = groups.first;
 
-    final labels = ['New request', 'For me (${incoming.length})', 'My requests'];
+    final labels = [
+      tr('New request'),
+      trp('For me ({n})', {'n': incoming.length}),
+      tr('My requests'),
+    ];
 
     return AppPage(children: [
-      const Text('Request blood',
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -.6)),
+      Text(tr('Request blood'),
+          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800, letterSpacing: -.6)),
       SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(children: [
@@ -216,15 +225,15 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
       if (_tab == 0) ..._form(me, groups),
       if (_tab == 1) ...[
         if (!me.canBeContacted)
-          const FieldLabel(
-              'You are not available right now, so requests are hidden. Turn on availability from Home.')
+          FieldLabel(tr(
+              'You are not available right now, so requests are hidden. Turn on availability from Home.'))
         else if (incoming.isEmpty)
-          const FieldLabel(
-              'No open requests match your blood group near you. You will get a banner when one arrives.'),
+          FieldLabel(tr(
+              'No open requests match your blood group near you. You will get a banner when one arrives.')),
         for (final i in incoming) RequestTile(r: i.request, km: i.km),
       ],
       if (_tab == 2) ...[
-        if (mine.isEmpty) const FieldLabel('You have not posted any requests yet.'),
+        if (mine.isEmpty) FieldLabel(tr('You have not posted any requests yet.')),
         for (final r in mine) RequestTile(r: r, mine: true),
       ],
     ]);

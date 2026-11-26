@@ -27,8 +27,11 @@ class AppTheme {
     );
 
     return base.copyWith(
-      textTheme: GoogleFonts.plusJakartaSansTextTheme(base.textTheme)
-          .apply(bodyColor: text, displayColor: text),
+      textTheme: GoogleFonts.plusJakartaSansTextTheme(base.textTheme).apply(
+        bodyColor: text,
+        displayColor: text,
+        fontFamilyFallback: [GoogleFonts.notoSansBengali().fontFamily!],
+      ),
       dividerTheme: DividerThemeData(color: line),
       iconTheme: IconThemeData(color: muted),
       dialogTheme: DialogThemeData(

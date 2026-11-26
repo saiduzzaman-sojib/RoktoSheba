@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import '../../core/l10n/l10n.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/gradient_scaffold.dart';
@@ -34,16 +35,17 @@ class CampReminderSection extends ConsumerWidget {
           child: AppCard(
             onTap: () => context.go('/camps'),
             child: Row(children: [
-              const Icon(Icons.notifications_active, color: AppColors.red),
+              Icon(Icons.notifications_active, color: context.accent),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(
-                      DateTime(c.date.year, c.date.month, c.date.day) == today
+                      tr(DateTime(c.date.year, c.date.month, c.date.day) == today
                           ? 'Camp today'
-                          : 'Camp tomorrow',
+                          : 'Camp tomorrow'),
                       style: const TextStyle(fontWeight: FontWeight.w800)),
-                  FieldLabel('${c.title} · ${c.place} · ${DateFormat('h:mm a').format(c.date)}'),
+                  FieldLabel(
+                      '${c.title} · ${c.place} · ${bnNum(DateFormat('h:mm a').format(c.date))}'),
                 ]),
               ),
             ]),
