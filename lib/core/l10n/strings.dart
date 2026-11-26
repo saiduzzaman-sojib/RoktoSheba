@@ -435,4 +435,18 @@ const bnStrings = <String, String>{
   'Changes': 'পরিবর্তন',
   'If these terms change, we will ask you to agree again.':
       'শর্ত বদলালে আমরা আবার আপনার সম্মতি চাইব।',
+
+
+  // ---- Onboarding ----
+  'Skip': 'এড়িয়ে যান',
+  'Next': 'পরের',
+  'Find blood fast': 'দ্রুত রক্ত খুঁজুন',
+  'Search eligible donors near you by blood group and distance, in minutes.':
+      'রক্তের গ্রুপ ও দূরত্ব অনুযায়ী কাছের যোগ্য দাতা মিনিটের মধ্যে খুঁজে নিন।',
+  'Your phone stays private': 'আপনার ফোন নম্বর গোপন থাকে',
+  'Your number is shared only if you accept a request, and only with that requester.':
+      'আপনি অনুরোধ রাজি হলে তবেই নম্বর জানানো হয়, এবং শুধু সেই অনুরোধকারীকে।',
+  'Be a lifesaver': 'জীবন বাঁচান',
+  'Turn on availability, get alerts for nearby requests, and track your donation record.':
+      '"প্রস্তুত" চালু করুন, কাছের অনুরোধের অ্যালার্ট পান এবং নিজের রক্তদানের রেকর্ড রাখুন।',
 };
