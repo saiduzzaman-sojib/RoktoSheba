@@ -449,4 +449,16 @@ const bnStrings = <String, String>{
   'Be a lifesaver': 'জীবন বাঁচান',
   'Turn on availability, get alerts for nearby requests, and track your donation record.':
       '"প্রস্তুত" চালু করুন, কাছের অনুরোধের অ্যালার্ট পান এবং নিজের রক্তদানের রেকর্ড রাখুন।',
+
+
+  // ---- Blog ----
+  'All posts': 'সব লেখা',
+  'Tip': 'পরামর্শ',
+  'Myth': 'ভুল ধারণা',
+  'Story': 'গল্প',
+  'Could not load articles. Check your internet.':
+      'লেখা লোড করা যায়নি। ইন্টারনেট দেখুন।',
+  'Nothing here yet.': 'এখনো কিছু নেই।',
+  'Could not load this article.': 'এই লেখাটি লোড করা যায়নি।',
+  'This article no longer exists.': 'এই লেখাটি আর নেই।',
 };
