@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:roktosheba/features/hospitals/hospital_screen.dart';
 import '../../features/admin/admin_screen.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/register_screen.dart';
@@ -15,12 +14,14 @@ import '../../features/donors/presentation/donor_detail_screen.dart';
 import '../../features/donors/presentation/nearby_screen.dart';
 import '../../features/eligibility/eligibility_screen.dart';
 import '../../features/home/home_screen.dart';
+import '../../features/hospitals/hospital_screen.dart';
 import '../../features/legal/consent.dart';
 import '../../features/legal/terms_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/requests/presentation/request_screen.dart';
 import '../../features/requests/presentation/request_status_screen.dart';
 import '../../features/splash/splash_screen.dart';
+import '../services/telemetry.dart';
 import '../widgets/main_shell.dart';
 
 /// Tells go_router to re-run `redirect` whenever login state changes.
@@ -51,6 +52,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
   return GoRouter(
     initialLocation: '/',
+    observers: [Telemetry.observer],
     refreshListenable: Listenable.merge([refresh, termsAccepted]),
     redirect: (context, state) {
       final loc = state.matchedLocation;
