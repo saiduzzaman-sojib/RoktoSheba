@@ -1,181 +1,156 @@
 <div align="center">
 
-# 🩸 Roktosheba
+# Roktosheba
 
-**Find voluntary blood donors near you, fast.**
-A free, bilingual (Bangla + English) blood donor app for Bangladesh, built with Flutter and Firebase.
+Find voluntary blood donors near you, fast.
+A free, bilingual (Bangla and English) blood donor app for Bangladesh.
 
-[![Release](https://img.shields.io/github/v/release/saiduzzaman-sojib/RoktoSheba?style=for-the-badge&color=B23A3A)](https://github.com/saiduzzaman-sojib/RoktoSheba/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/saiduzzaman-sojib/RoktoSheba/total?style=for-the-badge&color=B23A3A)](https://github.com/saiduzzaman-sojib/RoktoSheba/releases)
-![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)
-![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)
-![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
+[![Release](https://img.shields.io/github/v/release/saiduzzaman-sojib/RoktoSheba?style=flat-square&color=8E2B2B&label=release)](https://github.com/saiduzzaman-sojib/RoktoSheba/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/saiduzzaman-sojib/RoktoSheba/total?style=flat-square&color=555555&label=downloads)](https://github.com/saiduzzaman-sojib/RoktoSheba/releases)
+![Flutter](https://img.shields.io/badge/Flutter-555555?style=flat-square&logo=flutter&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-555555?style=flat-square&logo=firebase&logoColor=white)
+![Platform](https://img.shields.io/badge/Android-555555?style=flat-square&logo=android&logoColor=white)
 
-[**⬇️ Download APK**](https://github.com/saiduzzaman-sojib/RoktoSheba/releases/latest) ·
-[Features](#-features) ·
-[Screenshots](#-screenshots) ·
-[Getting started](#-getting-started)
+[Download](https://github.com/saiduzzaman-sojib/RoktoSheba/releases/latest) &nbsp;|&nbsp; [Features](#features) &nbsp;|&nbsp; [Screenshots](#screenshots) &nbsp;|&nbsp; [Getting started](#getting-started)
 
 <br>
 
-<img src="docs/screenshots/light-home.png" alt="Roktosheba home screen" width="220">
-<img src="docs/screenshots/light-request.png" alt="Request blood screen" width="220">
-<img src="docs/screenshots/dark-home.png" alt="Roktosheba dark mode" width="220">
+<img src="docs/screenshots/light-home.png" alt="Home" width="210">&nbsp;&nbsp;
+<img src="docs/screenshots/light-request.png" alt="Request blood" width="210">&nbsp;&nbsp;
+<img src="docs/screenshots/dark-home.png" alt="Home, dark mode" width="210">
 
 </div>
 
----
+<br>
 
-## 📖 About
+## About
 
-In an emergency, finding the right blood group quickly is the hard part. **Roktosheba** connects people who need blood with eligible, willing donors nearby. A requester posts a request, matching donors are alerted, and a donor's phone number is shared **only after they accept**.
+In an emergency, finding the right blood group quickly is the hard part. Roktosheba connects people who need blood with eligible, willing donors nearby. A requester posts a request, matching donors are alerted, and a donor's phone number is shared only after they accept.
 
-The whole app runs on the **Firebase Spark (free) plan**: no Cloud Functions, no Storage, no Blaze billing.
+The app runs entirely on the Firebase Spark (free) plan, with no Cloud Functions, Storage or billing.
 
-> ⚠️ Roktosheba is not a blood bank and gives general information only. It does not replace medical advice. The final decision to donate is always made by the hospital or blood bank. In an emergency, call **999**.
+> Roktosheba is not a blood bank and gives general information only. It does not replace medical advice, and the final decision to donate is always made by the hospital or blood bank. In an emergency, call 999.
 
-## ✨ Features
+## Features
 
-| | |
+| Feature | Description |
 |---|---|
-| 🗺️ **Live donor map** | See available donors on a map, filter by blood group and distance (2.5 / 5 / 10 / 25 km). |
-| 🆘 **Blood requests** | Post a request with blood group, units and urgency (Critical, Within 24h, Planned). Matching donors are notified. |
-| 🏥 **Hospital finder** | Search nearby hospitals using OpenStreetMap data, call them or get directions, and pick one straight into a request. |
-| ✅ **Eligibility check** | Tells a donor whether they can donate today and when they are next eligible. |
-| 🔁 **Compatibility guide** | Quick "who can give to whom" reference for all 8 blood groups. |
-| 📅 **Donation camps** | Upcoming camps with reminders and directions. |
-| 📚 **Health tips and stories** | Donation tips, myths and donor stories. |
-| 🤖 **Response predictor** | A small on-device model estimates how likely a donor is to respond (trained on simulated data, see [limitations](#-limitations)). |
-| 🌐 **Bangla and English** | Full Bangla UI with Bangla digits and dates, switchable any time. |
-| 🌙 **Light and dark mode** | Auto, Light or Dark. |
-| 🔒 **Privacy and safety** | Contact details are private until accepted, abuse reporting, and a request rate limit. |
-| 👋 **Onboarding and Terms** | First-run intro and a clear Terms & Privacy summary the user must accept. |
+| Live donor map | Available donors on a map, filtered by blood group and distance. |
+| Blood requests | Post a request with blood group, units and urgency. Matching donors are notified. |
+| Hospital finder | Nearby hospitals from OpenStreetMap, with call, directions and one-tap selection in a request. |
+| Eligibility check | Shows whether a donor can donate today and when they are next eligible. |
+| Compatibility guide | Quick reference for who can give to whom. |
+| Donation camps | Upcoming camps with reminders and directions. |
+| Health tips | Donation tips, myths and donor stories. |
+| Response predictor | Small on-device model estimating donor response likelihood. See [limitations](#limitations). |
+| Bangla and English | Full Bangla interface with Bangla digits and dates. |
+| Light and dark theme | Auto, Light or Dark. |
+| Privacy and safety | Private contact details, abuse reporting and a request rate limit. |
 
-## 📸 Screenshots
+## Screenshots
 
-### Light
+**Light**
 
-<div align="center">
-<img src="docs/screenshots/light-login.png" alt="Login" width="200">
-<img src="docs/screenshots/light-home.png" alt="Home" width="200">
-<img src="docs/screenshots/light-request.png" alt="Request blood" width="200">
-<img src="docs/screenshots/light-profile.png" alt="Profile" width="200">
-</div>
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/light-login.png" width="170"><br><sub>Login</sub></td>
+    <td align="center"><img src="docs/screenshots/light-terms.png" width="170"><br><sub>Terms and Privacy</sub></td>
+    <td align="center"><img src="docs/screenshots/light-home.png" width="170"><br><sub>Home</sub></td>
+    <td align="center"><img src="docs/screenshots/light-request.png" width="170"><br><sub>Request blood</sub></td>
+    <td align="center"><img src="docs/screenshots/light-profile.png" width="170"><br><sub>Profile</sub></td>
+  </tr>
+</table>
 
-### Dark
+**Dark**
 
-<div align="center">
-<img src="docs/screenshots/dark-home.png" alt="Home (dark)" width="200">
-<img src="docs/screenshots/dark-request.png" alt="Request blood (dark)" width="200">
-<img src="docs/screenshots/dark-camps.png" alt="Donation camps (dark)" width="200">
-</div>
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/dark-home.png" width="170"><br><sub>Home</sub></td>
+    <td align="center"><img src="docs/screenshots/dark-request.png" width="170"><br><sub>Request blood</sub></td>
+    <td align="center"><img src="docs/screenshots/dark-camps.png" width="170"><br><sub>Donation camps</sub></td>
+  </tr>
+</table>
 
-### বাংলা (Bangla)
+**Bangla**
 
-<div align="center">
-<img src="docs/screenshots/bn-home.png" alt="Home (Bangla)" width="200">
-<img src="docs/screenshots/bn-profile.png" alt="Profile (Bangla)" width="200">
-</div>
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/bn-home.png" width="170"><br><sub>Home</sub></td>
+    <td align="center"><img src="docs/screenshots/bn-profile.png" width="170"><br><sub>Profile</sub></td>
+  </tr>
+</table>
 
-## 🧰 Tech stack
+## Tech stack
 
 | Area | Choice |
 |---|---|
 | Framework | Flutter (Dart), Material 3 |
 | State management | Riverpod 3 |
-| Navigation | go_router (`StatefulShellRoute`, auth and Terms redirects) |
-| Backend | Firebase Auth, Cloud Firestore (`asia-south1`) |
+| Navigation | go_router |
+| Backend | Firebase Auth, Cloud Firestore |
 | Monitoring | Firebase Crashlytics and Analytics (release builds only) |
-| Hospitals | OpenStreetMap Overpass API |
-| Localization | Lightweight built-in `tr()` / `trp()` helpers with a Bangla string map |
-| Theming | Custom light/dark theme extension, Google Fonts |
+| Maps and hospitals | flutter_map, OpenStreetMap Overpass API |
+| Localization | Built-in `tr()` helpers with a Bangla string map |
 
-## 🏗️ Project structure
+## Project structure
 
 ```
 lib/
-├── core/          # theme, router, l10n, shared widgets, services (telemetry), utils
-└── features/      # auth, donors, requests, hospitals, camps, blog,
-                   # eligibility, compatibility, safety, onboarding, splash, legal, profile
+  core/        theme, router, l10n, shared widgets, services, utils
+  features/    auth, donors, requests, hospitals, camps, blog, eligibility,
+               compatibility, safety, onboarding, splash, legal, profile
 ```
 
-Each feature keeps its own `data/` and `presentation/` code.
+## Getting started
 
-## 🚀 Getting started
-
-### Prerequisites
-- [Flutter SDK](https://docs.flutter.dev/get-started/install) (stable)
-- A Firebase project on the free Spark plan
-- Firebase CLI and FlutterFire CLI
-
-### Run it
+Requirements: Flutter (stable), a Firebase project on the Spark plan, Firebase CLI and FlutterFire CLI.
 
 ```bash
 git clone https://github.com/saiduzzaman-sojib/RoktoSheba.git
 cd RoktoSheba
 flutter pub get
-```
-
-Connect your own Firebase project (this repo does not ship private keys):
-
-```bash
 dart pub global activate flutterfire_cli
 flutterfire configure
 ```
 
-Enable **Email/Password** sign-in in Firebase Authentication and create a Firestore database. Then deploy the security rules:
+Enable Email/Password sign-in and create a Firestore database in your Firebase project, then deploy the rules and run the app:
 
 ```bash
 firebase deploy --only firestore:rules
-```
-
-Run the app:
-
-```bash
 flutter run
 ```
 
-### Build a release APK
-
-Create your own keystore and an `android/key.properties` file (both are git-ignored, never commit them), then:
+To build a release APK, create your own keystore and `android/key.properties` (both are git-ignored), then:
 
 ```bash
-flutter build apk --release                 # universal APK
-flutter build apk --release --split-per-abi # smaller per-architecture APKs
+flutter build apk --release
 ```
 
-## 🔐 Security and privacy
+## Security and privacy
 
-- **Contact details are private.** A donor's phone number is stored in a separate document and revealed to the requester only after the donor accepts.
-- **Server-enforced rate limit.** One blood request per 5 minutes per user, enforced by Firestore Security Rules (no Cloud Functions needed).
-- **Abuse reporting.** Users can report a request or a donor. Reports are create-only, one per target, and readable only by admins.
-- **Minimal telemetry.** Crash and usage data are collected only in release builds, never in debug.
-- Release signing keys and `key.properties` are never committed.
+- A donor's phone number is stored in a separate document and revealed to the requester only after the donor accepts.
+- One blood request per 5 minutes per user, enforced by Firestore Security Rules.
+- Requests and donors can be reported. Reports are create-only, one per target, and readable only by admins.
+- Crash and usage data are collected in release builds only.
+- Signing keys and `key.properties` are never committed.
 
-## ⚠️ Limitations
+## Limitations
 
-- **No server-sent push notifications.** Alerts are in-app because background push needs Cloud Functions (Firebase Blaze plan). This is a deliberate trade-off to keep the app free.
-- **The response predictor uses simulated data.** It is a demo of on-device ML, not a clinically validated model.
+- No server-sent push notifications. Background push needs Cloud Functions (paid plan), so alerts are in-app.
+- The response predictor is trained on simulated data. It demonstrates on-device ML and is not clinically validated.
 - Profile photos are stored as compressed base64 in Firestore to avoid paid Storage.
-- Android is the primary tested release target. iOS builds run from source but are not distributed.
+- Android is the tested release target. iOS runs from source but is not distributed.
 
-## 🗺️ Roadmap
+## Roadmap
 
-- [ ] Admin dashboard tab for reviewing reports
-- [ ] Unit tests for eligibility, matching and the predictor
-- [ ] Push notifications (requires a paid Firebase plan)
-- [ ] Play Store release
+- Admin screen for reviewing reports
+- Unit tests for eligibility, matching and the predictor
+- Play Store release
 
-## 🤝 Contributing
+## Contributing
 
-Issues and pull requests are welcome. For larger changes, please open an issue first to discuss what you would like to change.
+Issues and pull requests are welcome. For larger changes, please open an issue first.
 
-## 👤 Author
+## Author
 
-**Md Saiduzzaman**, [@saiduzzaman-sojib](https://github.com/saiduzzaman-sojib)
-
----
-
-<div align="center">
-Made with ❤️ in Bangladesh. Every donation can save a life. 🩸
-</div>
+Md Saiduzzaman, [@saiduzzaman-sojib](https://github.com/saiduzzaman-sojib)
