@@ -461,4 +461,25 @@ const bnStrings = <String, String>{
   'Nothing here yet.': 'এখনো কিছু নেই।',
   'Could not load this article.': 'এই লেখাটি লোড করা যায়নি।',
   'This article no longer exists.': 'এই লেখাটি আর নেই।',
+
+
+  // ---- Safety ----
+  'Report': 'রিপোর্ট',
+  'Why are you reporting this?': 'কেন রিপোর্ট করছেন?',
+  'Fake or spam request': 'ভুয়া বা স্প্যাম অনুরোধ',
+  'Asking for money': 'টাকা চাওয়া হচ্ছে',
+  'Harassment or abuse': 'হয়রানি বা অপব্যবহার',
+  'Wrong or misleading information': 'ভুল বা বিভ্রান্তিকর তথ্য',
+  'Something else': 'অন্য কিছু',
+  'Thank you. Our team will review this report.':
+      'ধন্যবাদ। আমাদের টিম রিপোর্টটি দেখবে।',
+  'You have already reported this.': 'আপনি এটি আগেই রিপোর্ট করেছেন।',
+  'Could not send the report. Try again.':
+      'রিপোর্ট পাঠানো যায়নি। আবার চেষ্টা করুন।',
+  'Please wait a few minutes before posting another request.':
+      'আরেকটি অনুরোধ দেওয়ার আগে কয়েক মিনিট অপেক্ষা করুন।',
+
+  // ---- Hospital picker ----
+  'Pick from nearby hospitals': 'কাছের হাসপাতাল থেকে বাছুন',
+  'Choose a hospital': 'হাসপাতাল বাছুন',
 };

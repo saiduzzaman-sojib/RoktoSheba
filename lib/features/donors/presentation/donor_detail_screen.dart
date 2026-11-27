@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:roktosheba/features/safety/report_button.dart';
 import '../../../core/l10n/l10n.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/distance.dart';
@@ -98,6 +99,7 @@ class DonorDetailScreen extends ConsumerWidget {
           _row(tr('Last donation'),
               d.lastDonation == null ? tr('Not shared') : fmtDate(d.lastDonation!)),
           _row(tr('Contact number'), tr('Shared after donor accepts')),
+          ReportButton(type: 'donor', targetId: d.uid, targetUserId: d.uid),
           FieldLabel(tr(
               'Phone numbers stay private. The donor gets an alert and decides whether to accept.')),
           AppButton(

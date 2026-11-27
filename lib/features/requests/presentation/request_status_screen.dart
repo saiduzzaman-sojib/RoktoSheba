@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:roktosheba/features/safety/report_button.dart';
 import '../../../core/l10n/l10n.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/share_utils.dart';
@@ -291,6 +292,7 @@ class _DonorView extends ConsumerWidget {
       if (km != null)
         _infoRow(tr('Distance'), trp('{n} km away', {'n': km.toStringAsFixed(1)})),
       _infoRow(tr('Posted'), timeAgoTr(r.createdAt)),
+       ReportButton(type: 'request', targetId: r.id, targetUserId: r.requesterId),
       if (accepted) ...[
         Container(
           padding: const EdgeInsets.all(16),

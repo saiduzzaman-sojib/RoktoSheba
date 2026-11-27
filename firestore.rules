@@ -41,12 +41,27 @@ service cloud.firestore {
       allow read, write: if isOwner(uid) || isAdmin();
     }
 
+    // One request per 5 minutes. The rate_limits doc must be written in the
+    // same batch as the request, with the same server time.
+    match /rate_limits/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['lastAt'])
+        && request.resource.data.lastAt == request.time;
+      allow update: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(['lastAt'])
+        && request.resource.data.lastAt == request.time
+        && request.time > resource.data.lastAt + duration.value(5, 'm');
+    }
+
     match /requests/{id} {
       allow read: if signedIn();
       allow create: if signedIn()
         && notBlocked()
         && request.resource.data.requesterId == request.auth.uid
-        && request.resource.data.status == 'open';
+        && request.resource.data.status == 'open'
+        && getAfter(/databases/$(database)/documents/rate_limits/$(request.auth.uid)).data.lastAt
+            == request.time;
       allow update, delete: if signedIn()
         && (resource.data.requesterId == request.auth.uid || isAdmin());
 
@@ -66,6 +81,19 @@ service cloud.firestore {
           || get(/databases/$(database)/documents/requests/$(id)).data.requesterId == request.auth.uid
           || isAdmin();
       }
+    }
+
+    // Abuse reports. One report per user per target; only admins can read them.
+    match /reports/{id} {
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(
+             ['reporterId', 'type', 'targetId', 'targetUserId', 'reason', 'createdAt'])
+        && request.resource.data.reporterId == request.auth.uid
+        && request.resource.data.type in ['request', 'donor']
+        && id == request.auth.uid + '_' + request.resource.data.type + '_' + request.resource.data.targetId
+        && request.resource.data.reason is string
+        && request.resource.data.reason.size() <= 100;
+      allow read, update, delete: if isAdmin();
     }
 
     match /donations/{id} {

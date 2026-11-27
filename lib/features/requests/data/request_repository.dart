@@ -2,6 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geoflutterfire_plus/geoflutterfire_plus.dart';
 import '../../../core/constants/firestore_paths.dart';
 
+/// Thrown when the user posted a request in the last few minutes.
+class RateLimitedException implements Exception {
+  const RateLimitedException();
+}
+
 class RequestRepository {
   RequestRepository(this._db);
   final FirebaseFirestore _db;
@@ -22,7 +27,11 @@ class RequestRepository {
     final mobile = (mine.data()?['mobile'] ?? '') as String;
 
     final ref = _db.collection(FS.requests).doc();
-    await ref.set({
+
+    // The request and the cooldown stamp go in one batch. The rules reject the
+    // whole batch if the user posted less than 5 minutes ago.
+    final batch = _db.batch();
+    batch.set(ref, {
       'requesterId': uid,
       'requesterName': name,
       'bloodGroup': bloodGroup,
@@ -36,6 +45,15 @@ class RequestRepository {
       if (location != null) 'position': GeoFirePoint(location).data,
       'createdAt': FieldValue.serverTimestamp(),
     });
+    batch.set(_db.collection('rate_limits').doc(uid),
+        {'lastAt': FieldValue.serverTimestamp()});
+    try {
+      await batch.commit();
+    } on FirebaseException catch (e) {
+      if (e.code == 'permission-denied') throw const RateLimitedException();
+      rethrow;
+    }
+
     // Written after the request exists (the rules look the request up).
     try {
       await ref

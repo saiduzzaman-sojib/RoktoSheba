@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/blood.dart';
 import '../../../core/l10n/l10n.dart';
 import '../../../core/services/location_service.dart';
+import '../../../core/services/telemetry.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
@@ -13,6 +14,9 @@ import '../../../core/widgets/blood_chip.dart';
 import '../../../core/widgets/gradient_scaffold.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../donors/models/donor.dart';
+import '../../hospitals/hospital_picker.dart';
+import '../../hospitals/hospital_service.dart';
+import '../data/request_repository.dart';
 import '../models/blood_request.dart';
 import '../providers/request_provider.dart';
 import 'request_widgets.dart';
@@ -37,6 +41,7 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
   String _urgency = 'Critical';
   bool _busy = false, _filled = false;
   Map<String, String>? _target;
+  Hospital? _picked; // hospital chosen from the nearby list
 
   @override
   void initState() {
@@ -83,12 +88,19 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
     }
     setState(() => _busy = true);
     try {
-      // The requester's current position stands in for the hospital's.
-      final loc = await getMyLocation();
       double r3(double v) => (v * 1000).round() / 1000;
-      final GeoPoint? gp = loc.point != null
-          ? GeoPoint(r3(loc.point!.latitude), r3(loc.point!.longitude))
-          : me.location;
+      GeoPoint? gp;
+      final p = _picked;
+      if (p != null && p.name == hospital) {
+        // The hospital came from the list, so use its real position.
+        gp = GeoPoint(r3(p.lat), r3(p.lon));
+      } else {
+        // Otherwise the requester's current position stands in for the hospital's.
+        final loc = await getMyLocation();
+        gp = loc.point != null
+            ? GeoPoint(r3(loc.point!.latitude), r3(loc.point!.longitude))
+            : me.location;
+      }
       final id = await ref.read(requestRepositoryProvider).create(
             uid: me.uid,
             name: me.name,
@@ -101,10 +113,18 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
             location: gp,
             targetDonorId: _target?['uid'],
           );
+      Telemetry.event('request_created', {'urgency': _urgency});
       if (!mounted) return;
       _hospital.clear();
-      setState(() => _target = null);
+      setState(() {
+        _target = null;
+        _picked = null;
+      });
       context.push('/request/$id');
+    } on RateLimitedException {
+      m.showSnackBar(SnackBar(
+          content: Text(
+              tr('Please wait a few minutes before posting another request.'))));
     } catch (_) {
       m.showSnackBar(SnackBar(content: Text(tr('Could not post. Check your internet.'))));
     } finally {
@@ -139,6 +159,10 @@ class _RequestScreenState extends ConsumerState<RequestScreen> {
             controller: _hospital,
             textCapitalization: TextCapitalization.words,
             decoration: InputDecoration(hintText: tr('Hospital name'))),
+        HospitalPickerButton(
+          controller: _hospital,
+          onPicked: (h) => setState(() => _picked = h),
+        ),
         FieldLabel(tr('District and area')),
         Row(children: [
           Expanded(
